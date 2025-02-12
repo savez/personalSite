@@ -1,0 +1,176 @@
+baseURL = 'https://smzstudio.it/'
+languageCode = 'it-IT'
+title = ''
+theme = 'hugo-coder'
+
+[pagination]
+pagerSize = 6
+
+[services]
+[services.disqus]
+# Enable Disqus comments
+# shortname = "yourdiscussshortname"
+
+[markup]
+[markup.highlight]
+noClasses = true
+
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
+
+[params]
+author = "Saverio Menin"
+# license = '<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA-4.0</a>'
+description = "Saverio Menin's personal website"
+keywords = "blog,developer,personal"
+info = ["Chief Software Architect", "Full Stack DevOps"]
+avatarURL = "me.jpg"
+#gravatar = "saverio.menin@gmail.com"
+dateFormat = "January 2, 2006"
+since = 1987
+rtl = false
+colorScheme = "auto"
+hideColorSchemeToggle = false
+# Series see also post count
+maxSeeAlsoItems = 5
+# Custom CSS
+customCSS = []
+# Custom SCSS, file path is relative to Hugo's asset folder (default: {your project root}/assets)
+customSCSS = []
+
+# Custom JS
+customJS = []
+
+# Custom remote JS files
+customRemoteJS = []
+
+# If you want to use fathom(https://usefathom.com) for analytics, add this section
+# [params.fathomAnalytics]
+# siteID = "ABCDE"
+# serverURL = "analytics.example.com" # Default value is cdn.usefathom.com, overwrite this if you are self-hosting
+
+# If you want to use plausible(https://plausible.io) for analytics, add this section
+# [params.plausibleAnalytics]
+# domain = "example.com"
+# serverURL = "analytics.example.com" # Default value is plausible.io, overwrite this if you are self-hosting or using a custom domain
+# outboundLinksTracking = true
+# fileDownloadsTracking = true
+
+# If you want to use goatcounter(https://goatcounter.com) for analytics, add this section
+# [params.goatCounter]
+# code = "code"
+
+# If you want to use Cloudflare Web Analytics(https://cloudflare.com) for analytics, add this section
+# [params.cloudflare]
+# token = "token"
+
+# If you want to use Matomo(https://matomo.org) for analytics, add this section
+# [params.matomo]
+# siteID = "ABCDE" # Default value is "1", overwrite this if you are cloud-hosting
+# serverURL = "analytics.example.com" # For cloud-hosting, use provided URL, e.g. example.matomo.cloud
+
+# If you want to use Google Tag Manager(https://analytics.google.com/) for analytics, add this section
+# [params.googleTagManager]
+# id = "gid"
+
+# If you want to use Yandex Metrika(https://metrika.yandex.ru) for analytics, add this section
+# [params.yandexMetrika]
+# id = "gid"
+
+# If you want to use Application Insights(https://azure.com/) for analytics, add this section
+# [params.applicationInsights]
+# connectionString = "connectionString"
+
+# If you want to use microanalytics.io for analytics, add this section
+# [params.microAnalytics]
+# id = "ABCDE"
+# dnt = "false" # respect DNT tracker, "true" by default
+
+# If you want to use Pirsch(https://pirsch.io) for analytics, add this section
+# [params.pirsch]
+# code = "ABCDE"
+
+# If you want to use Umami(https://umami.is) for analytics, add this section
+[params.umami]
+siteID = "8addd358-0297-463b-87c4-6800792b4407"
+scriptURL = "https://cloud.umami.is/script.js"
+
+# If you want to use One Dollars Stats(https://onedollarstats.com/analytics) for analytics, add this section
+# [params.onedollarstats]
+# id = "data-site-id"
+
+# If you want to implement a Content-Security-Policy, add this section
+[params.csp]
+childsrc = ["'self'"]
+fontsrc = ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net/"]
+formaction = ["'self'"]
+framesrc = ["'self'", "https://www.youtube.com"]
+imgsrc = ["'self'"]
+objectsrc = ["'none'"]
+stylesrc = [
+  "'self'",
+  "'unsafe-inline'",
+  "https://fonts.googleapis.com/",
+  "https://cdn.jsdelivr.net/",
+]
+scriptsrc = [
+  "'self'",
+  "'unsafe-inline'",
+  "https://www.google-analytics.com",
+  "https://cdn.jsdelivr.net/",
+]
+prefetchsrc = ["'self'"]
+# connect-src directive – defines valid targets for to XMLHttpRequest (AJAX), WebSockets or EventSource
+connectsrc = ["'self'", "https://www.google-analytics.com"]
+
+[taxonomies]
+category = "categories"
+series = "series"
+tag = "tags"
+author = "authors"
+
+[[params.social]]
+name = "Github"
+icon = "fa-brands fa-github fa-2x"
+weight = 1
+url = "https://github.com/savez/"
+
+
+[[params.social]]
+name = "LinkedIn"
+icon = "fa-brands fa-linkedin fa-2x"
+weight = 4
+url = "https://www.linkedin.com/in/saveriomenin/"
+
+[[params.social]]
+name = "Medium"
+icon = "fa-brands fa-medium fa-2x"
+weight = 5
+url = "https://medium.com/@savezzo"
+
+[[params.social]]
+name = "slides"
+icon = "fa-brands fa-slideshare fa-2x"
+weight = 5
+url = "https://slides.com/saveriom"
+
+[languages.en]
+languageName = ":uk:"
+
+
+[[languages.en.menu.main]]
+name = "/"
+weight = 1
+url = "/"
+
+[[languages.en.menu.main]]
+name = "About"
+weight = 2
+url = "/about"
+
+[[languages.en.menu.main]]
+name = "Projects"
+weight = 3
+url = "projects/"
+
