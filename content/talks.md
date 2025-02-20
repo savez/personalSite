@@ -11,7 +11,7 @@ Cloud e sanità: problema o opportunità? Cosa significa, in un contesto regolam
 
 [ASCOLTA >>](https://open.spotify.com/episode/2yLm2wKqvU0PGZWJdQTVxW?si=2d1fa4aed9e64edc)
 
-## OCloud Transformation: Use Case Session
+## Cloud Transformation: Use Case Session
 
 _Giugno 2024_
 
