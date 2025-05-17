@@ -7,12 +7,19 @@ author = "Saverio Menin"
 +++
  Sono Chief Software Architect e Full-stack developer da diversi anni.
 
- Nato come sviluppatore principalmente PHP, nel corso degli anni mi sono interessato di DevOps e Front-end, abbracciando tutto il mondo dello sviluppo dal server all'interfaccia.
+ Saverio è un informatico per passione e professione.
 
-Mi occupo principalmente della realizzazione di applicativi custom dedicati a specifiche esigenze del cliente, seguendoli nell'analisi e nello sviluppo seguendo la metodologia SCRUM per la realizzazione dei progetti.
+Dopo la laurea in Informatica, ha iniziato la sua carriera lavorando in proprio, per poi entrare nel 2011 in una software house specializzata in soluzioni sanitarie, dove ha contribuito allo sviluppo di prodotti come cartelle cliniche e software per la nutrizione dei neonati prematuri.
 
-Mi piace migliorare la metodologia, rimanendo costantemente aggiornato sulle nuove tecnologie o linguaggi di programmazione, studiando e confrontandomi con gli altri.
+Nel 2018 ha fatto un salto nella consulenza, ricoprendo il ruolo di Senior Consultant in Deloitte, guidando un piccolo team di sviluppatori e data scientist.
 
+L’anno successivo è tornato a concentrarsi sul mondo sanitario, questa volta come sviluppatore full-stack in una società del settore.
+
+Dal 2022 è Chief Software Architect, con responsabilità su architettura interna, sull'aspetto tecnologico e grande focus su DevOps e DevEx.
+
+Curioso per natura, non smette mai di aggiornarsi: tra articoli, manuali, conferenze e community, è sempre in ascolto del futuro.
+
+Negli ultimi anni ha partecipato come relatore a podcast e ha avuto l'onore di essere finalista alla gara dell’Osservatorio Cloud del Politecnico di Milano.
  ---
 
  **EM@il**: saverio.menin[at]gmail.com
