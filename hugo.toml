@@ -1,4 +1,4 @@
-baseURL = 'https://smzstudio.it/'
+2baseURL = 'https://smzstudio.it/'
 languageCode = 'it-IT'
 title = ''
 theme = 'hugo-coder'
@@ -24,7 +24,7 @@ author = "Saverio Menin"
 # license = '<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA-4.0</a>'
 description = "Saverio Menin's personal website"
 keywords = "blog,developer,personal"
-info = ["Chief Software Architect", "Full Stack DevOps", "DevEx & Serverless lover]
+info = ["Chief Software Architect", "Full Stack DevOps", "DevEx & Serverless lover"]
 avatarURL = "me.jpg"
 #gravatar = "saverio.menin@gmail.com"
 dateFormat = "January 2, 2006"
