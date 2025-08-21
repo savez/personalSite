@@ -6,19 +6,30 @@ aliases = ["about", "contact"]
 author = "Saverio Menin"
 +++
 
-Saverio è un informatico per passione e professione.
+Ciao! 👋 Sono _Saverio Menin_
 
-Dopo la laurea in Informatica, ha iniziato la sua carriera lavorando in proprio, per poi entrare nel 2011 in una software house specializzata in soluzioni sanitarie, dove ha contribuito allo sviluppo di prodotti come cartelle cliniche e software per la nutrizione dei neonati prematuri.
+In qualità di Chief Software Architecte & Full-stack Developer, mi dedico da anni alla progettazione e realizzazione di soluzioni software complete.
 
-Nel 2018 ha fatto un salto nella consulenza, ricoprendo il ruolo di Senior Consultant in Deloitte, guidando un piccolo team di sviluppatori e data scientist.
 
-L’anno successivo è tornato a concentrarsi sul mondo sanitario, questa volta come sviluppatore full-stack in una società del settore.
+Ho iniziato la mia carriera con una solida base in PHP 🐘, per poi espandere le mie competenze all'intero ecosistema di sviluppo: dal DevOps al Front-end, abbracciando ogni fase del ciclo di vita del software.
 
-Dal 2022 è Chief Software Architect, con responsabilità su architettura interna, sull'aspetto tecnologico e grande focus su DevOps e DevEx.
 
-Curioso per natura, non smette mai di aggiornarsi: tra articoli, manuali, conferenze e community, è sempre in ascolto del futuro.
+Mi focalizzo sull'aspetto architetturale del sistema e sulle integrazioni, gestendo ogni fase fino al deployment. 
+L'applicazione della metodologia SCRUM garantisce massima efficienza e trasparenza, mentre i miei KPI principali - performance 🚀, sicurezza 🔒 e manutenibilità ✅ - guidano ogni scelta progettuale.
 
-Negli ultimi anni ha partecipato come relatore a podcast e ha avuto l'onore di essere finalista alla gara dell’Osservatorio Cloud del Politecnico di Milano.
+
+Negli ultimi anni, ho concentrato la mia esperienza sull'architettura cloud-native, portando le aziende verso soluzioni serverless che garantiscono scalabilità, efficienza e innovazione. 
+E, sebbene l'Intelligenza Artificiale 🤖 sia ormai un "must", la considero un prezioso alleato: analizzo costantemente nuovi strumenti AI per integrarli nel mio lavoro, ottimizzare la mia attività di architetto e sviluppatore, e migliorare anche la mia vita quotidiana.
+
+
+La domotica e l'IoT sono la mia passione segreta. 
+Amo sperimentare in casa con nuovi dispositivi e progetti, un modo per trasformare la teoria in pratica e imparare divertendomi.
+
+🔗 Dove trovarmi
+- 🌐 Sito web: smzstudio.it
+- 📝 Blog: medium.com/@savezzo
+- 🗣️ Presentazioni: slides.com/saveriom
+- 🤝 LinkedIn: linkedin.com/in/saveriomenin/
 
  ---
 
