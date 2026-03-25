@@ -30,8 +30,9 @@ Da anni progetto e realizzo soluzioni software complete, occupandomi di ogni fas
 ---
 
 ## 🔗 Dove trovarmi
-- 🌐 [Sito web](https://smzstudio.it)  
-- 📝 [Blog](https://medium.com/@savezzo)  
+- 🌐 [Github](https://github.com/savez/)  
+- 📝 [Medium](https://medium.com/@savezzo)
+- 📝 [Daily dev](https://app.daily.dev/savez)
 - 🗣️ [Presentazioni](https://slides.com/saveriom)  
 - 🤝 [LinkedIn](https://linkedin.com/in/saveriomenin/)  
 
