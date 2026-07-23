@@ -150,12 +150,11 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
 }
 .home-landing .who {
   font-family: var(--mono);
-  font-size: 1.3rem;
+  font-size: 1.7rem;
   line-height: 1.5;
-  color: var(--muted);
+  color: var(--accent);
   margin: 0;
 }
-.home-landing .who .accent { color: var(--accent); }
 /* The personal statement is the hero headline */
 .home-landing .statement {
   font-size: 2.8rem;
