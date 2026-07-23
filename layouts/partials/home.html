@@ -1,4 +1,5 @@
 <section class="container home-landing">
+  {{ partial "home/avatar.html" . }}
   <p class="eyebrow">$ whoami</p>
   <h1>{{ .Site.Params.author }}</h1>
   {{ with .Site.Params.info }}

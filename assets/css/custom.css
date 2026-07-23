@@ -133,6 +133,14 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
   margin: 4rem auto 6rem;
   text-align: left;
 }
+.home-landing .avatar { margin: 0 0 2rem; }
+.home-landing .avatar img {
+  width: 10rem;
+  height: 10rem;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+}
 .home-landing .eyebrow {
   font-family: var(--mono);
   font-size: 1.3rem;
