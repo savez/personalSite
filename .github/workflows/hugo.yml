@@ -2,36 +2,31 @@
 name: Deploy Hugo site to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+  schedule:
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
-# Default to bash
 defaults:
   run:
     shell: bash
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.128.0
+      MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
     steps:
       - name: Install Hugo CLI
         run: |
@@ -43,6 +38,41 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Fetch GitHub security advisories
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data/advisories
+          for eco in npm composer actions; do
+            gh api -H "Accept: application/vnd.github+json" \
+              "/advisories?type=reviewed&ecosystem=$eco&per_page=50&sort=published&direction=desc" \
+              > "data/advisories/$eco.json" || echo "[]" > "data/advisories/$eco.json"
+            test -s "data/advisories/$eco.json" || echo "[]" > "data/advisories/$eco.json"
+          done
+      - name: Check repo inactivity
+        id: inactivity
+        run: |
+          LAST=$(git log -1 --format=%ct)
+          NOW=$(date +%s)
+          DAYS=$(( (NOW - LAST) / 86400 ))
+          echo "days=$DAYS" >> "$GITHUB_OUTPUT"
+          echo "Days since last commit: $DAYS"
+      - name: Send inactivity reminder
+        if: ${{ github.event_name == 'schedule' && steps.inactivity.outputs.days > 30 && env.MAIL_SERVER != '' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "smzstudio.it · cron a rischio, fai un commit"
+          to: ${{ secrets.MAIL_TO }}
+          from: smzstudio bot <${{ secrets.MAIL_USERNAME }}>
+          body: |
+            Il repository savez/personalSite è inattivo da ${{ steps.inactivity.outputs.days }} giorni.
+            GitHub disabilita i workflow schedulati dopo 60 giorni di inattività.
+            Fai un commit qualsiasi per tenere vivo l'aggiornamento giornaliero delle advisory.
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -61,7 +91,6 @@ jobs:
         with:
           path: ./public
 
-  # Deployment job
   deploy:
     environment:
       name: github-pages
