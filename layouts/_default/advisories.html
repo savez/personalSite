@@ -7,7 +7,13 @@
     <p class="adv-updated mono">// github advisory database · npm · composer · actions — aggiornato {{ now.UTC.Format "2006-01-02 15:04" }} UTC</p>
 
     {{ $ecos := slice "npm" "composer" "actions" }}
-    {{ $data := site.Data.advisories | default dict }}
+    {{ $raw := site.Data.advisories | default dict }}
+    {{ $data := dict }}
+    {{ range $eco := $ecos }}
+      {{ $items := slice }}
+      {{ if isset $raw $eco }}{{ $items = index $raw $eco }}{{ end }}
+      {{ $data = merge $data (dict $eco $items) }}
+    {{ end }}
     {{ $sevLabels := dict "critical" "Critical" "high" "High" "medium" "Moderate" "low" "Low" "unknown" "Unknown" }}
 
     {{/* Merge every ecosystem into one list tagged with its eco, then sort by date desc */}}
