@@ -133,41 +133,51 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
   margin: 4rem auto 6rem;
   text-align: left;
 }
-.home-landing .avatar { margin: 0 0 2rem; }
+/* Terminal-prompt caption: small circular photo + who-am-I */
+.home-landing .hero-prompt {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin: 0 0 2.2rem;
+}
+.home-landing .avatar { margin: 0; }
 .home-landing .avatar img {
-  width: 10rem;
-  height: 10rem;
+  width: 5.4rem;
+  height: 5.4rem;
   object-fit: cover;
   border-radius: 50%;
   border: 1px solid var(--line);
 }
-.home-landing .eyebrow {
+.home-landing .who {
   font-family: var(--mono);
   font-size: 1.3rem;
-  color: var(--accent);
-  letter-spacing: 0.04em;
-  margin: 0 0 1rem;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0;
 }
-.home-landing h1 {
+.home-landing .who .accent { color: var(--accent); }
+/* The personal statement is the hero headline */
+.home-landing .statement {
   font-size: 3.2rem;
-  line-height: 1.15;
+  line-height: 1.2;
   font-weight: 600;
-  margin: 0 0 1.6rem;
+  letter-spacing: -0.015em;
   color: var(--ink);
+  margin: 0 0 1.8rem;
+  max-width: 42rem;
+  text-align: left;
 }
-.home-landing .roles {
-  list-style: none;
-  margin: 0 0 2rem;
-  padding: 0;
-  font-size: 1.6rem;
-  line-height: 1.9;
+.home-landing .statement .hl { color: var(--accent); }
+@media only screen and (max-width: 768px) {
+  .home-landing .statement { font-size: 2.6rem; }
 }
-.home-landing .roles li { margin: 0; }
-.home-landing .intro {
-  font-size: 1.5rem;
+/* Roles as a quiet mono footnote row */
+.home-landing .role-line {
+  font-family: var(--mono);
+  font-size: 1.3rem;
   line-height: 1.6;
   color: var(--muted);
-  max-width: 52rem;
+  letter-spacing: 0.03em;
   margin: 0 0 2rem;
 }
 .home-landing .quick-links {
