@@ -187,15 +187,20 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
   align-items: center;
 }
 .social-icons li { margin: 0; }
-.social-icons a {
-  color: var(--muted);
-  display: inline-flex;
-}
-.social-icons a:hover,
-.social-icons a:focus {
-  color: var(--ink);
-  text-decoration: none;
-}
+.social-icons a { display: inline-flex; }
+/* Force muted in every scheme. The theme's `body.colorscheme-* a` (0,1,2) and
+   our own `.entry .entry-body a` (0,2,1, About "links" row) would otherwise
+   recolor these icons, so the override must carry the same body-prefix the
+   theme's dark rules use. */
+body.colorscheme-light .social-icons a,
+body.colorscheme-dark .social-icons a,
+body.colorscheme-auto .social-icons a { color: var(--muted); }
+body.colorscheme-light .social-icons a:hover,
+body.colorscheme-light .social-icons a:focus,
+body.colorscheme-dark .social-icons a:hover,
+body.colorscheme-dark .social-icons a:focus,
+body.colorscheme-auto .social-icons a:hover,
+body.colorscheme-auto .social-icons a:focus { color: var(--ink); text-decoration: none; }
 .social-icons i { font-size: 1.9rem; }
 
 /* ---------- Page (About / Talks) ---------- */
@@ -211,6 +216,7 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
   line-height: 1.6;
   color: var(--muted);
   margin: 0 0 2.4rem;
+  text-align: left;
 }
 .page blockquote {
   border-left: 2px solid var(--accent);
@@ -220,6 +226,11 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
   font-size: 1.5rem;
   margin: 2.4rem 0 1.2rem;
 }
+/* Keep the accent border in dark/auto — theme ships
+   `body.colorscheme-dark blockquote` (0,1,2) with a grey border. */
+body.colorscheme-light .page blockquote,
+body.colorscheme-dark .page blockquote,
+body.colorscheme-auto .page blockquote { border-left-color: var(--accent); }
 .page .email {
   font-family: var(--mono);
   font-size: 1.3rem;
@@ -243,7 +254,7 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
   padding-top: 0.4rem;
 }
 .entry .entry-body { flex: 1 1 auto; }
-.entry .entry-body p { margin: 0 0 0.8rem; font-size: 1.5rem; line-height: 1.7; }
+.entry .entry-body p { margin: 0 0 0.8rem; font-size: 1.5rem; line-height: 1.7; text-align: left; }
 .entry .entry-body p:last-child { margin-bottom: 0; }
 .entry .entry-body h3 { margin: 0 0 0.6rem; font-size: 1.7rem; }
 .entry .entry-body a {
@@ -266,7 +277,12 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
 .footer a { font-size: 1.2rem; }
 .footer,
 .footer .container { color: var(--muted); }
-.footer a { color: var(--ink); }
+/* Theme ships `body.colorscheme-dark .footer a` (0,2,2) in blue — a second
+   accent. Match its body-prefix so links stay ink and the palette stays
+   single-accent in every scheme. */
+body.colorscheme-light .footer a,
+body.colorscheme-dark .footer a,
+body.colorscheme-auto .footer a { color: var(--ink); }
 
 /* ---------- Motion ---------- */
 @media (prefers-reduced-motion: reduce) {
