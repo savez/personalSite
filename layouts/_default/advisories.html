@@ -1,0 +1,75 @@
+{{ define "title" }}{{ .Title }} · {{ .Site.Title }}{{ end }}
+{{ define "content" }}
+<section class="container page adv-page">
+  <article>
+    <p class="page-eyebrow">$ gh advisory list --reviewed</p>
+    <h1>Security advisories</h1>
+    <p class="adv-updated mono">// github advisory database · npm · composer · actions — aggiornato {{ now.UTC.Format "2006-01-02 15:04" }} UTC</p>
+
+    {{ $ecos := slice "npm" "composer" "actions" }}
+    {{ $data := site.Data.advisories | default dict }}
+    {{ $sevLabels := dict "critical" "Critical" "high" "High" "medium" "Moderate" "low" "Low" "unknown" "Unknown" }}
+
+    {{/* Merge every ecosystem into one list tagged with its eco, then sort by date desc */}}
+    {{ $all := slice }}
+    {{ range $eco := $ecos }}
+      {{ range (index $data $eco) }}
+        {{ $all = $all | append (dict "eco" $eco "adv" . "published" .published_at) }}
+      {{ end }}
+    {{ end }}
+    {{ $all = sort $all "published" "desc" }}
+
+    <div class="adv-search">
+      <span class="adv-search-glyph mono" aria-hidden="true">/</span>
+      <label class="sr-only" for="adv-q">Cerca advisory</label>
+      <input id="adv-q" type="search" autocomplete="off" spellcheck="false"
+             placeholder="cerca per pacchetto, CVE/GHSA, o testo…">
+    </div>
+
+    <div class="adv-tabs mono" role="tablist" aria-label="Ecosistemi">
+      <button class="adv-tab active" role="tab" aria-selected="true" data-tab="all">all <span class="n">{{ len $all }}</span></button>
+      {{ range $eco := $ecos }}
+        <button class="adv-tab" role="tab" aria-selected="false" data-tab="{{ $eco }}">{{ $eco }} <span class="n">{{ len (index $data $eco) }}</span></button>
+      {{ end }}
+    </div>
+
+    <div class="adv-list">
+      {{ range $all }}
+        {{ $adv := .adv }}
+        {{ $eco := .eco }}
+        {{ $v := dict }}
+        {{ with $adv.vulnerabilities }}{{ $v = index . 0 }}{{ end }}
+        {{ $pkg := "" }}{{ with $v.package }}{{ $pkg = .name }}{{ end }}
+        {{ $sev := lower (default "unknown" $adv.severity) }}
+        {{ $sevLabel := index $sevLabels $sev | default "Unknown" }}
+        {{ $search := lower (printf "%s %s %s %s %s" $pkg $adv.summary (default "" $adv.ghsa_id) (default "" $adv.cve_id) $eco) }}
+        <article class="adv-row" data-eco="{{ $eco }}" data-search="{{ $search }}">
+          <div class="adv-sev sev-{{ $sev }}">
+            <span class="adv-badge mono"><span class="adv-dot" aria-hidden="true"></span> {{ $sevLabel }}</span>
+            <span class="adv-date mono">{{ dateFormat "2006-01-02" $adv.published_at }}</span>
+          </div>
+          <div class="adv-body">
+            <span class="adv-pkg mono">{{ $pkg | default "—" }}</span><span class="adv-eco mono">{{ $eco }}</span>
+            <p class="adv-summary">{{ $adv.summary }}</p>
+            <div class="adv-meta mono">
+              <a href="{{ $adv.html_url }}" target="_blank" rel="noopener">{{ $adv.ghsa_id }}</a>
+              {{ with $adv.cve_id }}<a href="https://nvd.nist.gov/vuln/detail/{{ . }}" target="_blank" rel="noopener">{{ . }}</a>{{ end }}
+              {{ with $v.first_patched_version }}<span class="adv-fix">patch: &ge; {{ . }}</span>{{ end }}
+            </div>
+          </div>
+        </article>
+      {{ end }}
+
+      {{ range $eco := $ecos }}
+        {{ if not (index $data $eco) }}
+          <p class="adv-empty" data-eco="{{ $eco }}">Nessuna advisory disponibile per {{ $eco }} (aggiornamento non riuscito).</p>
+        {{ end }}
+      {{ end }}
+    </div>
+
+    <p class="adv-noresult" hidden>Nessun risultato per «<span class="adv-q-echo"></span>».</p>
+  </article>
+</section>
+{{ $js := resources.Get "js/advisories.js" }}
+{{ if $js }}<script src="{{ $js.RelPermalink }}" defer></script>{{ end }}
+{{ end }}

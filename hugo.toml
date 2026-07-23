@@ -174,3 +174,8 @@ name = "talks"
 weight = 3
 url = "talks/"
 
+[[languages.en.menu.main]]
+name = "advisories"
+weight = 4
+url = "advisories/"
+
