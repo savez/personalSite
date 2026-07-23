@@ -1,0 +1,20 @@
+<section class="container home-landing">
+  <p class="eyebrow">$ whoami</p>
+  <h1>{{ .Site.Params.author }}</h1>
+  {{ with .Site.Params.info }}
+    {{ if reflect.IsSlice . }}
+      <ul class="roles">
+        {{ range . }}
+          {{ $parts := split . " " }}
+          <li><span class="emoji">{{ index $parts 0 }}</span> {{ delimit (after 1 $parts) " " }}</li>
+        {{ end }}
+      </ul>
+    {{ end }}
+  {{ end }}
+  <p class="intro">Da anni progetto e realizzo soluzioni software complete, occupandomi di ogni fase del ciclo di vita: dall'architettura al codice, fino al deployment.</p>
+  <div class="quick-links">
+    <a href="{{ "about/" | relLangURL }}">cat about.md &rarr;</a>
+    <a href="{{ "talks/" | relLangURL }}">ls talks/ &rarr;</a>
+  </div>
+  {{ partial "social-icons.html" . }}
+</section>

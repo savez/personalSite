@@ -1,0 +1,13 @@
+{{ with .Site.Params.social }}
+<ul class="social-icons">
+  {{ range sort . "weight" }}
+    {{ if .icon }}
+      <li>
+        <a href="{{ .url | safeURL }}" aria-label="{{ .name }}" rel="me noopener" target="_blank">
+          <i class="{{ .icon }}" aria-hidden="true"></i>
+        </a>
+      </li>
+    {{ end }}
+  {{ end }}
+</ul>
+{{ end }}
