@@ -58,7 +58,7 @@ jobs:
           echo "days=$DAYS" >> "$GITHUB_OUTPUT"
           echo "Days since last commit: $DAYS"
       - name: Send inactivity reminder
-        if: ${{ github.event_name == 'schedule' && steps.inactivity.outputs.days > 30 && env.MAIL_SERVER != '' }}
+        if: ${{ github.event_name == 'schedule' && steps.inactivity.outputs.days > 30 && steps.inactivity.outputs.days < 33 && env.MAIL_SERVER != '' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: ${{ secrets.MAIL_SERVER }}
@@ -72,7 +72,7 @@ jobs:
           body: |
             Il repository savez/personalSite è inattivo da ${{ steps.inactivity.outputs.days }} giorni.
             GitHub disabilita i workflow schedulati dopo 60 giorni di inattività.
-            Fai un commit qualsiasi per tenere vivo l'aggiornamento giornaliero delle advisory.
+            Fai un commit qualsiasi entro i prossimi giorni per tenere vivo l'aggiornamento giornaliero delle advisory (questo è un promemoria singolo, non verrà ripetuto ogni giorno).
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5

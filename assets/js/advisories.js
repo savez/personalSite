@@ -14,7 +14,7 @@
     tabs.forEach(function (t) {
       var on = t.getAttribute('data-tab') === tab;
       t.classList.toggle('active', on);
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
 

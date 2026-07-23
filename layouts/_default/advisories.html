@@ -32,10 +32,10 @@
              placeholder="cerca per pacchetto, CVE/GHSA, o testo…">
     </div>
 
-    <div class="adv-tabs mono" role="tablist" aria-label="Ecosistemi">
-      <button class="adv-tab active" role="tab" aria-selected="true" data-tab="all">all <span class="n">{{ len $all }}</span></button>
+    <div class="adv-tabs mono" aria-label="Filtra per ecosistema">
+      <button class="adv-tab active" aria-pressed="true" data-tab="all">all <span class="n">{{ len $all }}</span></button>
       {{ range $eco := $ecos }}
-        <button class="adv-tab" role="tab" aria-selected="false" data-tab="{{ $eco }}">{{ $eco }} <span class="n">{{ len (index $data $eco) }}</span></button>
+        <button class="adv-tab" aria-pressed="false" data-tab="{{ $eco }}">{{ $eco }} <span class="n">{{ len (index $data $eco) }}</span></button>
       {{ end }}
     </div>
 
@@ -77,5 +77,12 @@
   </article>
 </section>
 {{ $js := resources.Get "js/advisories.js" }}
-{{ if $js }}<script src="{{ $js.RelPermalink }}" defer></script>{{ end }}
+{{ if $js }}
+  {{ if hugo.IsServer }}
+    <script src="{{ $js.RelPermalink }}" defer></script>
+  {{ else }}
+    {{ $js = $js | minify | fingerprint }}
+    <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+  {{ end }}
+{{ end }}
 {{ end }}
