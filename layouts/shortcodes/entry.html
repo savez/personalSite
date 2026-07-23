@@ -1,0 +1,6 @@
+<div class="entry">
+  {{ with .Get "label" }}<div class="entry-label mono">{{ . }}</div>{{ end }}
+  <div class="entry-body">
+    {{ .Inner | markdownify }}
+  </div>
+</div>
