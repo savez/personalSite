@@ -160,17 +160,17 @@ languageName = ":uk:"
 
 
 [[languages.en.menu.main]]
-name = "/"
+name = "home"
 weight = 1
 url = "/"
 
 [[languages.en.menu.main]]
-name = "About"
+name = "about"
 weight = 2
 url = "/about"
 
 [[languages.en.menu.main]]
-name = "Talks"
+name = "talks"
 weight = 3
 url = "talks/"
 
