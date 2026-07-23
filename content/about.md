@@ -4,41 +4,34 @@ description = "Saverio Menin's personal website"
 date = "1987-10-10"
 aliases = ["about", "contact"]
 author = "Saverio Menin"
+eyebrow = "$ cat about.md"
 +++
 
-# 👋 Ciao, sono Saverio Menin
+# <span class="emoji">👋</span> Ciao, sono Saverio Menin
 
-💻 **Chief Software Architect & Full-stack Developer**  
-Da anni progetto e realizzo soluzioni software complete, occupandomi di ogni fase del ciclo di vita: dall’architettura al codice, fino al deployment.
+<p class="lead"><span class="emoji">💻</span> <strong>Chief Software Architect &amp; Full-stack Developer</strong>, Santagostino.<br><br>Progetto e realizzo software end-to-end: dall'architettura al deployment.</p>
 
----
+{{< entry label="about-me" >}}
+Partito da **PHP**, oggi copro tutto lo stack: front-end, back-end, DevOps e cloud.
 
-## 🚀 About Me
-- Ho iniziato con **PHP** 🐘, poi ho ampliato le mie competenze a tutto l’ecosistema di sviluppo:  
-  **Front-end**, **Back-end**, **DevOps** e **Cloud**.
-- Mi concentro sugli aspetti **architetturali** e sulle **integrazioni**, applicando metodologie **SCRUM** per efficienza e trasparenza.
-- I miei **KPI** principali guidano ogni progetto:  
-  ✅ *performance* · 🔒 *sicurezza* · ♻️ *manutenibilità*
+Mi concentro su architettura e integrazioni, con metodo SCRUM.
 
----
+Performance, sicurezza, manutenibilità: i tre KPI che guidano ogni progetto.
+{{< /entry >}}
 
-## ☁️ Focus Attuale
-- Architetture **cloud-native** e **serverless** per garantire scalabilità ed efficienza.  
-- Integrazione dell’**Intelligenza Artificiale** 🤖 come strumento per migliorare workflow, sviluppo e vita quotidiana.  
-- Passione per **Domotica & IoT**, dove sperimento e porto la teoria nella pratica.  
+{{< entry label="focus" >}}
+Cloud-native e serverless, per scalare senza sprechi.
 
----
+AI applicata al lavoro quotidiano: workflow, sviluppo, vita di tutti i giorni.
 
-## 🔗 Dove trovarmi
-- 🌐 [Github](https://github.com/savez/)  
-- 📝 [Medium](https://medium.com/@savezzo)
-- 📝 [Daily dev](https://app.daily.dev/savez)
-- 🗣️ [Presentazioni](https://slides.com/saveriom)  
-- 🤝 [LinkedIn](https://linkedin.com/in/saveriomenin/)  
+IoT e domotica, dove la teoria diventa pratica.
+{{< /entry >}}
 
----
+<div class="entry">
+  <div class="entry-label mono">links</div>
+  <div class="entry-body">{{< social >}}</div>
+</div>
 
-✨ _“Architettura, innovazione e sperimentazione: il software come strumento per creare valore reale.”_
- ---
+> <span class="emoji">✨</span> "Architettura, innovazione e sperimentazione: il software come strumento per creare valore reale."
 
- **EM@il**: saverio.menin[at]gmail.com
+<p class="email mono">EM@il: saverio.menin[at]gmail.com</p>
