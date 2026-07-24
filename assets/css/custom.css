@@ -366,6 +366,12 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   padding: 1.6rem 0;
   border-bottom: 1px solid var(--line);
 }
+/* The JS toggles the `hidden` attribute to filter. The UA rule `[hidden]{display:none}`
+   is only (0,0,1) and loses to `.adv-row{display:flex}` (0,1,0), so hidden rows would
+   stay visible — re-assert it at higher specificity for every element the JS hides. */
+.adv-row[hidden],
+.adv-empty[hidden],
+.adv-noresult[hidden] { display: none; }
 .adv-sev { flex: 0 0 8.5rem; }
 .adv-badge {
   font-size: 1rem;
