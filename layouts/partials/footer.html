@@ -16,4 +16,5 @@
       [<a href="{{ .Site.Params.commit }}/{{ .GitInfo.Hash }}" target="_blank" rel="noopener">{{ .GitInfo.AbbreviatedHash }}</a>]
     {{ end }}
   </section>
+  {{ partial "carbon-badge.html" . }}
 </footer>

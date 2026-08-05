@@ -49,6 +49,11 @@ jobs:
               > "data/advisories/$eco.json" || echo "[]" > "data/advisories/$eco.json"
             test -s "data/advisories/$eco.json" || echo "[]" > "data/advisories/$eco.json"
           done
+      - name: Measure CO2 footprint
+        env:
+          CARBON_SITE_URL: https://smzstudio.it/
+          CARBON_GREEN: "0"
+        run: node scripts/carbon.js
       - name: Check repo inactivity
         id: inactivity
         run: |

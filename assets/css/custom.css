@@ -307,6 +307,19 @@ body.colorscheme-light .footer a,
 body.colorscheme-dark .footer a,
 body.colorscheme-auto .footer a { color: var(--ink); }
 
+.carbon-badge-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 0.6rem 0 0;
+}
+.carbon-badge {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--muted);
+  text-align: center;
+}
+.carbon-badge a { color: var(--accent); }
+
 /* ---------- Motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .navigation .term-cursor { animation: none; }

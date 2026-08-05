@@ -1,0 +1,17 @@
+# carbon-badge — English translations (site UI is served under the "en" language key)
+# Used by layouts/partials/carbon-badge.html via Hugo's `i18n` function.
+
+[carbon_aria_label]
+other = "Carbon footprint of this site"
+
+[carbon_emits]
+other = "🌱 This page emits about <strong>{{ printf \"%.3f\" .gco2e }}g</strong> of CO₂ per visit"
+
+[carbon_rating]
+other = "— rating: <strong>{{ .rating }}</strong>"
+
+[carbon_cleaner]
+other = "— cleaner than <strong>{{ printf \"%.0f\" .cleanerPct }}%</strong> of websites."
+
+[carbon_learn_more]
+other = "Learn more"
