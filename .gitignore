@@ -1,6 +1,7 @@
 public
 public/
-data
+data/*
+!data/carbon.json
 .superpowers/
 resources/_gen/
 docs/

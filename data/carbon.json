@@ -1,0 +1,27 @@
+{
+  "bytes": 5635,
+  "green": false,
+  "gco2e": 0.0005872042709961534,
+  "rating": "A+",
+  "statistics": {
+    "adjustedBytes": 4254.425,
+    "energy": 0.0000011886726133525372,
+    "co2": {
+      "grid": {
+        "grams": 0.0005872042709961534,
+        "litres": 0.00032660301552806046
+      },
+      "renewable": {
+        "grams": 0.0004795501546468586,
+        "litres": 0.0002667257960145827
+      }
+    }
+  },
+  "cleanerThan": 1,
+  "_meta": {
+    "siteUrl": "https://smzstudio.it/",
+    "green": false,
+    "bytes": 5635,
+    "measuredAt": "2026-08-05T07:45:13.461Z"
+  }
+}

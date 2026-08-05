@@ -15,6 +15,11 @@
  *   CARBON_BYTES      – fixed bytes sent to the API    (skips page fetch)
  *   CARBON_OUTPUT     – output path for the JSON file  (default: data/carbon.json)
  *
+ * NOTE: run this locally, not in CI. The Website Carbon API sits behind
+ * Cloudflare, which returns 403 for traffic from cloud/datacenter ASNs
+ * (including GitHub Actions runners). Re-run manually and commit the
+ * updated data/carbon.json whenever you want to refresh the figure.
+ *
  * Requires Node.js >= 18 (native fetch).
  */
 
