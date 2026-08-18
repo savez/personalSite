@@ -1,0 +1,21 @@
+{{- $repo := .Get "repo" -}}
+<div class="entry project">
+  <div class="entry-label mono">
+    {{ with .Get "kind" }}<span class="proj-kind">{{ . }}</span>{{ end }}
+    {{ with .Get "stack" }}<span class="proj-stack">{{ . }}</span>{{ end }}
+    {{ with .Get "license" }}<span class="proj-stack">{{ . }}</span>{{ end }}
+  </div>
+  <div class="entry-body">
+    <h3>{{ .Get "name" }}</h3>
+    <div class="proj-desc">{{ .Inner | markdownify }}</div>
+    {{ with .Get "cmd" }}
+      <p class="proj-cmd mono"><span class="p" aria-hidden="true">$</span> <span class="c">{{ . }}</span></p>
+    {{ end }}
+    <p class="proj-links mono">
+      {{ with $repo }}<a href="{{ . }}" target="_blank" rel="noopener">repository &#8599;</a>{{ end }}
+      {{ with .Get "page" }}<a href="{{ . }}" target="_blank" rel="noopener">pagina progetto &#8599;</a>{{ end }}
+      {{ with .Get "demo" }}<a href="{{ . }}" target="_blank" rel="noopener">demo &#8599;</a>{{ end }}
+      {{ with .Get "npm" }}<a href="{{ . }}" target="_blank" rel="noopener">npm &#8599;</a>{{ end }}
+    </p>
+  </div>
+</div>
