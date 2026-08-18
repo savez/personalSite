@@ -431,3 +431,62 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   .adv-sev { flex-basis: auto; display: flex; gap: 1.2rem; align-items: center; }
   .adv-date { margin-top: 0; }
 }
+
+/* ---------- Projects ---------- */
+/* Reuses the `.entry` row from About/Talks: label column left, body right. */
+.entry.project .entry-label {
+  flex: 0 0 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.entry.project .proj-kind {
+  font-size: 1.3rem;
+  color: var(--accent);
+  text-transform: lowercase;
+}
+.entry.project .proj-stack {
+  font-size: 1.15rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.entry.project .entry-body h3 { font-size: 1.8rem; margin: 0 0 0.8rem; }
+/* The theme centers copy by default — every block below must re-assert left. */
+.entry.project .proj-desc p {
+  margin: 0 0 0.9rem;
+  font-size: 1.5rem;
+  line-height: 1.7;
+  text-align: left;
+}
+.entry.project .proj-desc p:last-child { margin-bottom: 1.4rem; }
+.entry.project .proj-desc strong { font-family: var(--mono); font-weight: 600; }
+/* Signature: how you actually get the project, as a terminal line. */
+.entry.project .proj-cmd {
+  display: flex;
+  gap: 0.9rem;
+  align-items: baseline;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.9rem 1.2rem;
+  margin: 0 0 1.4rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--ink);
+  text-align: left;
+}
+.entry.project .proj-cmd .p { color: var(--accent); flex: 0 0 auto; }
+/* Long commands wrap inside the box — the page never scrolls sideways. */
+.entry.project .proj-cmd .c { overflow-wrap: anywhere; }
+.entry.project .proj-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.8rem;
+  margin: 0;
+  text-align: left;
+}
+@media only screen and (max-width: 600px) {
+  /* In the stacked (column) layout a flex-basis would set the label's HEIGHT,
+     leaving a tall empty gap above the title — reset it. */
+  .entry.project .entry-label { flex: 0 0 auto; flex-direction: row; flex-wrap: wrap; gap: 1.2rem; }
+}
