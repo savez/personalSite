@@ -490,3 +490,15 @@ body.colorscheme-auto .footer a { color: var(--ink); }
      leaving a tall empty gap above the title — reset it. */
   .entry.project .entry-label { flex: 0 0 auto; flex-direction: row; flex-wrap: wrap; gap: 1.2rem; }
 }
+
+/* Project marks: hairline, accent, same stroke weight as the page rules. */
+.entry.project .proj-mark {
+  width: 2.6rem;
+  height: 2.6rem;
+  display: block;
+  color: var(--accent);
+  margin: 0 0 0.3rem;
+}
+@media only screen and (max-width: 600px) {
+  .entry.project .proj-mark { margin: 0; }
+}

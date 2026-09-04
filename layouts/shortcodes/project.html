@@ -1,6 +1,7 @@
 {{- $repo := .Get "repo" -}}
 <div class="entry project">
   <div class="entry-label mono">
+    {{ with .Get "mark" }}{{ partial "project-mark.html" . }}{{ end }}
     {{ with .Get "kind" }}<span class="proj-kind">{{ . }}</span>{{ end }}
     {{ with .Get "stack" }}<span class="proj-stack">{{ . }}</span>{{ end }}
     {{ with .Get "license" }}<span class="proj-stack">{{ . }}</span>{{ end }}

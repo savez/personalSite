@@ -11,6 +11,7 @@ eyebrow = "$ ls ~/projects"
 
 {{< project
     name="Devvami"
+    mark="terminal"
     kind="cli"
     stack="Node.js · oclif"
     license="MIT"
@@ -24,6 +25,7 @@ Include un TUI per sincronizzare le configurazioni degli strumenti AI (server MC
 
 {{< project
     name="Fidelity Card"
+    mark="card"
     kind="pwa"
     stack="Vue 3 · IndexedDB"
     license="MIT"
@@ -37,6 +39,7 @@ Nessun login e nessun backend: le card restano sul dispositivo in IndexedDB e l'
 
 {{< project
     name="Officino"
+    mark="sheet"
     kind="webapp"
     stack="Fastify · Vue 3 · PostgreSQL"
     license="MIT"
