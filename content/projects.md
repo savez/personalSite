@@ -34,3 +34,15 @@ PWA per salvare, organizzare e condividere le tessere fedeltà. Scansione di bar
 
 Nessun login e nessun backend: le card restano sul dispositivo in IndexedDB e l'app si installa sul telefono, anche offline.
 {{< /project >}}
+
+{{< project
+    name="Officino"
+    kind="webapp"
+    stack="Fastify · Vue 3 · PostgreSQL"
+    license="MIT"
+    cmd="make prod"
+    repo="https://github.com/savez/officino" >}}
+Gestionale per officine meccaniche: si registra il lavoro svolto, se ne misura il costo e se ne ricava il documento da consegnare al cliente. Al centro c'è il rapportino — ore, materiali e costi di una lavorazione su un macchinario — che confluisce nelle note di lavorazione e nei PDF per il cliente.
+
+Include preventivi con numerazione progressiva, catalogo ricambi con lettura dei codici a barre, dashboard delle ore per operaio e per cliente, ruoli e permessi. Si auto-ospita con Docker Compose.
+{{< /project >}}
