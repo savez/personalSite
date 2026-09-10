@@ -49,3 +49,16 @@ Gestionale per officine meccaniche: si registra il lavoro svolto, se ne misura i
 
 Include preventivi con numerazione progressiva, catalogo ricambi con lettura dei codici a barre, dashboard delle ore per operaio e per cliente, ruoli e permessi. Si auto-ospita con Docker Compose.
 {{< /project >}}
+
+{{< project
+    name="NonAbbocco"
+    mark="urlbar"
+    kind="extension"
+    stack="Manifest V3 · Chrome · Firefox"
+    license="MIT"
+    repo="https://github.com/savez/nonAbbocco"
+    page="https://savez.github.io/nonAbbocco/" >}}
+Estensione contro il phishing per Chrome e Firefox: legge l'indirizzo e il contenuto di ogni pagina, assegna un rischio da 1 a 5 e mette un interstiziale prima che tu digiti le credenziali. Riconosce marchi infilati nel sottodominio altrui, typosquatting, omografi in alfabeti misti e login in chiaro, su 50 marchi italiani e internazionali.
+
+Il rank non è una somma di punti: quattro categorie — identità, credenziali, trasporto, reputazione — si combinano, e le credenziali da sole non bastano mai. Tutta l'analisi resta nel browser, senza telemetria. Nella pagina di progetto c'è un simulatore che gira sullo stesso motore dell'estensione.
+{{< /project >}}
