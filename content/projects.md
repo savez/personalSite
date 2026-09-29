@@ -7,7 +7,7 @@ eyebrow = "$ ls ~/projects"
 
 <h1 class="sr-only">Projects</h1>
 
-<p class="lead">Progetti open source che sviluppo nel tempo libero. Codice su GitHub, licenza MIT, contributi benvenuti.</p>
+<p class="lead">Progetti open source che sviluppo nel tempo libero. Codice su GitHub, contributi benvenuti.</p>
 
 {{< project
     name="Devvami"
