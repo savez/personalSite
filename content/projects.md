@@ -62,3 +62,15 @@ Estensione contro il phishing per Chrome e Firefox: legge l'indirizzo e il conte
 
 Il rank non è una somma di punti: quattro categorie — identità, credenziali, trasporto, reputazione — si combinano, e le credenziali da sole non bastano mai. Tutta l'analisi resta nel browser, senza telemetria. Nella pagina di progetto c'è un simulatore che gira sullo stesso motore dell'estensione.
 {{< /project >}}
+
+{{< project
+    name="Hermes Agent per Home Assistant"
+    mark="panel"
+    kind="add-on"
+    stack="Home Assistant OS · Docker · s6"
+    license="MIT"
+    repo="https://github.com/savez/hermes-agent-addon-ha" >}}
+Add-on che fa girare Hermes Agent — l'agente AI di NousResearch — dentro Home Assistant OS, come pannello nella sidebar e dietro il login di Home Assistant. Profili separati con memoria, skill e bot propri, canali di messaggistica come Telegram, accesso alle entità esposte ad Assist tramite il server MCP di Core e una CLI via SSH.
+
+Il punto è farlo stando dentro i canoni di Home Assistant invece di aggirarli: Ingress come unico ingresso, tutto il resto in ascolto su loopback, processo non privilegiato, immagine costruita sul dispositivo e nessun pacchetto installato a runtime. I compromessi accettati sono dichiarati uno per uno in SECURITY.md, a partire dal fatto che la dashboard non ha una password propria.
+{{< /project >}}
