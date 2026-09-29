@@ -44,7 +44,8 @@ Nessun login e nessun backend: le card restano sul dispositivo in IndexedDB e l'
     stack="Fastify · Vue 3 · PostgreSQL"
     license="MIT"
     cmd="make prod"
-    repo="https://github.com/savez/officino" >}}
+    repo="https://github.com/savez/officino"
+    page="https://savez.github.io/officino/" >}}
 Gestionale per officine meccaniche: si registra il lavoro svolto, se ne misura il costo e se ne ricava il documento da consegnare al cliente. Al centro c'è il rapportino — ore, materiali e costi di una lavorazione su un macchinario — che confluisce nelle note di lavorazione e nei PDF per il cliente.
 
 Include preventivi con numerazione progressiva, catalogo ricambi con lettura dei codici a barre, dashboard delle ore per operaio e per cliente, ruoli e permessi. Si auto-ospita con Docker Compose.
