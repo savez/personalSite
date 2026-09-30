@@ -9,7 +9,7 @@ Milano. Cloud native enthusiast e appassionato di intelligenza artificiale.
 
 ## In sintesi
 
-Progetta architetture software e ottimizza i processi DevOps, mettendo la Developer Experience
+Si occupa di progettare architetture software e di ottimizzare i processi DevOps, mettendo la Developer Experience
 al centro delle scelte tecnologiche. Ha sviluppato soluzioni mission-critical nella sanità e ha
 guidato team di sviluppo e data science come consulente in Deloitte. Oggi affianca al lavoro
 architetturale la sperimentazione sull'intelligenza artificiale: sistemi multi-agente e
@@ -67,11 +67,17 @@ Italiano madrelingua. Inglese livello elementare.
 
 ## Pubblicazioni e riconoscimenti
 
+Scrive articoli e contenuti tecnici su Medium e daily.dev, ed è speaker in podcast tecnologici.
 Pubblicazioni: "GraphQL in pillole", "Gestire un progetto", "Tip & Tricks".
 Finalista all'Osservatorio Cloud del Politecnico di Milano. Co-relatore di tesi di laurea, tre
 volte, con l'Università di Milano-Bicocca.
 
 ## Contatti
 
-Email saverio.menin@gmail.com · LinkedIn linkedin.com/in/saveriomenin ·
-GitHub github.com/savez · Medium medium.com/@savezzo · daily.dev app.daily.dev/savez
+Ogni riferimento va riportato esattamente come scritto qui, senza mescolarlo con gli altri.
+
+- Email: saverio.menin@gmail.com
+- LinkedIn: linkedin.com/in/saveriomenin
+- GitHub: github.com/savez
+- Medium: medium.com/@savezzo
+- daily.dev: app.daily.dev/savez

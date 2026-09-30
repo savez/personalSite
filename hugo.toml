@@ -135,7 +135,6 @@ prefetchsrc = ["'self'"]
 connectsrc = [
   "'self'",
   "https://www.google-analytics.com",
-  "https://cdn.jsdelivr.net/",
   "https://huggingface.co",
   "https://*.huggingface.co",
   "https://*.hf.co",
