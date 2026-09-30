@@ -1,0 +1,24 @@
+{{ define "title" }}{{ .Title }} · {{ .Site.Title }}{{ end }}
+{{ define "content" }}
+<section class="container page cv-page">
+  <article>
+    <p class="page-eyebrow">$ ./cv --chat</p>
+    <h1>Chatta con il mio CV</h1>
+
+    {{/* Il corpus non viene reso in pagina: serve solo al modello, che gira nel browser. */}}
+    {{ $corpus := resources.Get "data/cv.md" }}
+    {{/* safeJS: dentro <script> Go riavvolge la stringa già prodotta da jsonify. */}}
+    <script type="application/json" id="cv-corpus">{{ $corpus.Content | jsonify | safeJS }}</script>
+
+    <div class="cv-chat" data-state="checking">
+      <p class="cv-checking mono">Controllo se questo dispositivo può far girare il modello…</p>
+    </div>
+
+    <noscript>
+      <p class="cv-fallback">Questa pagina è una chat che gira nel tuo browser, quindi ha
+      bisogno di JavaScript. Il curriculum completo è su
+      <a href="https://www.linkedin.com/in/saveriomenin/" target="_blank" rel="noopener">LinkedIn</a>.</p>
+    </noscript>
+  </article>
+</section>
+{{ end }}

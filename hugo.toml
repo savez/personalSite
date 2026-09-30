@@ -170,17 +170,22 @@ weight = 2
 url = "/about"
 
 [[languages.en.menu.main]]
-name = "projects"
+name = "cv"
 weight = 3
+url = "cv/"
+
+[[languages.en.menu.main]]
+name = "projects"
+weight = 4
 url = "projects/"
 
 [[languages.en.menu.main]]
 name = "talks"
-weight = 4
+weight = 5
 url = "talks/"
 
 [[languages.en.menu.main]]
 name = "advisories"
-weight = 5
+weight = 6
 url = "advisories/"
 
