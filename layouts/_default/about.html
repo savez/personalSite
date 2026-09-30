@@ -1,0 +1,52 @@
+{{ define "title" }}{{ .Title }} · {{ .Site.Title }}{{ end }}
+{{ define "content" }}
+<section class="container page">
+  <article>
+    {{ with .Params.eyebrow }}<p class="page-eyebrow">{{ . }}</p>{{ end }}
+    {{ .Content }}
+
+    <div class="cv-chat-block">
+      <h2 class="cv-chat-title">Chatta con il mio CV</h2>
+
+      {{/* Il corpus non viene reso in pagina: serve solo al modello, che gira nel browser.
+           safeJS perché dentro <script> Go riavvolge la stringa già prodotta da jsonify. */}}
+      {{ $corpus := resources.Get "data/cv.md" }}
+      <script type="application/json" id="cv-corpus">{{ $corpus.Content | jsonify | safeJS }}</script>
+
+      {{/* La libreria è vendorizzata: importarla da CDN dentro il worker viene bloccato
+           dalla CSP, e sul nostro dominio toglie anche una dipendenza a runtime.
+           Il segnaposto __WEBLLM__ negli import viene sostituito col percorso reale.
+           Fingerprint senza minify: sono ES module, e il minificatore di Hugo 0.128 non
+           è affidabile sugli import. */}}
+      {{ $lib := resources.Get "js/vendor/web-llm-0.2.85.js" }}
+      {{ if not hugo.IsServer }}{{ $lib = $lib | fingerprint }}{{ end }}
+
+      {{/* nome diverso dall'asset di partenza: altrimenti collide e il server di sviluppo serve l'originale col segnaposto */}}
+      {{ $workerSrc := replace (resources.Get "js/cv-chat-worker.js").Content "__WEBLLM__" $lib.RelPermalink }}
+      {{ $worker := resources.FromString "js/cv-chat-worker.built.js" $workerSrc }}
+      {{ if not hugo.IsServer }}{{ $worker = $worker | fingerprint }}{{ end }}
+
+      <div class="cv-chat" data-state="checking" data-worker="{{ $worker.RelPermalink }}">
+        <p class="cv-checking mono">Controllo se questo dispositivo può far girare il modello…</p>
+      </div>
+
+      <noscript>
+        <p class="cv-fallback">Questa chat gira nel tuo browser, quindi ha bisogno di JavaScript.
+        Il curriculum completo è su
+        <a href="https://www.linkedin.com/in/saveriomenin/" target="_blank" rel="noopener">LinkedIn</a>.</p>
+      </noscript>
+    </div>
+  </article>
+</section>
+
+{{ $lib := resources.Get "js/vendor/web-llm-0.2.85.js" }}
+{{ if not hugo.IsServer }}{{ $lib = $lib | fingerprint }}{{ end }}
+{{ $jsSrc := replace (resources.Get "js/cv-chat.js").Content "__WEBLLM__" $lib.RelPermalink }}
+{{ $js := resources.FromString "js/cv-chat.built.js" $jsSrc }}
+{{ if hugo.IsServer }}
+  <script type="module" src="{{ $js.RelPermalink }}"></script>
+{{ else }}
+  {{ $js = $js | fingerprint }}
+  <script type="module" src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+{{ end }}
+{{ end }}

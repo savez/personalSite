@@ -5,6 +5,7 @@ date = "1987-10-10"
 aliases = ["about", "contact"]
 author = "Saverio Menin"
 eyebrow = "$ cat about.md"
+layout = "about"
 +++
 
 # <span class="emoji">👋</span> Ciao, sono Saverio Menin

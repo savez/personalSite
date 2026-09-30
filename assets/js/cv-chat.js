@@ -6,8 +6,8 @@
 // La libreria è vendorizzata: vedi assets/js/vendor/. Il percorso lo riscrive Hugo.
 import { CreateWebWorkerMLCEngine, hasModelInCache } from "__WEBLLM__";
 
-const MODEL_ID = "Qwen3-0.6B-q4f32_1-MLC";
-const MODEL_MB = 357;
+const MODEL_ID = "Qwen3-1.7B-q4f32_1-MLC";
+const MODEL_MB = 985;
 const LINKEDIN = "https://www.linkedin.com/in/saveriomenin/";
 
 // Finestra da 4096 token: il corpus ne occupa ~950, il resto è la conversazione.
@@ -244,9 +244,15 @@ function buildVocabulary(corpus) {
   return new Set([...words, ...CV_TERMS]);
 }
 
+// Domande che riguardano il CV per forza, ma che possono non contenere nessuna parola
+// del CV: "chi sono?" è fatta di due parole corte e finiva rifiutata.
+const ALWAYS_OK =
+  /\b(chi (sono|sei|e|è)|chi e |presentati|parlami|raccontami|dimmi di|di cosa si occupa|cosa fa|che fa|cosa sa fare|punti di forza|in sintesi|riassumi|curriculum|\bcv\b)/i;
+
 function isAboutCv(question, vocabulary) {
   if (OFF_TOPIC.test(question)) return false;
-  const words = (question.toLowerCase().match(/[a-zàèéìòù0-9]{4,}/g) || [])
+  if (ALWAYS_OK.test(question)) return true;
+  const words = (question.toLowerCase().match(/[a-zàèéìòù0-9]{3,}/g) || [])
     .filter((w) => !STOPWORDS.has(w));
   if (!words.length) return false;
   // Basta una parola piena in comune col CV: chiedere "che lingue parla?" deve passare.
@@ -270,6 +276,10 @@ REGOLE:
 4. Non calcolare date né durate: se una durata ti serve, è già scritta nel CV. Copiala.
 5. Rispondi sempre in italiano, in due o tre frasi al massimo.
 6. Parla di Saverio in terza persona ("Saverio ha...", "ha lavorato..."), mai in prima.
+7. Se ti chiedono le esperienze, i lavori o i contatti, elencali TUTTI, uno per riga, con i
+   dati completi. Non riassumere e non fermarti al primo.
+8. Se la domanda contiene "altre", "altri", "ancora" o "prima", cita solo le aziende che non
+   hai ancora nominato nella conversazione. Se le hai nominate tutte, dillo.
 
 --- CV ---
 ${corpus}
@@ -277,10 +287,17 @@ ${corpus}
 }
 
 // Se il modello ragiona comunque ad alta voce, il ragionamento non deve arrivare in pagina.
+// E il Markdown che produce va reso leggibile senza costruire HTML: il testo arriva da un
+// modello, quindi resta testo, e la formattazione la fa il CSS con white-space: pre-wrap.
 function visible(text) {
   return text
     .replace(/<think>[\s\S]*?<\/think>/g, "")
     .replace(/<think>[\s\S]*$/g, "")
+    .replace(/\s+-\s+(?=\S)/g, "\n· ")
+    .replace(/^\s*[-*]\s+/gm, "· ")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*/g, "")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
@@ -380,6 +397,9 @@ function showConversation() {
       stream: true,
       temperature: 0.1,
       max_tokens: 300,
+      // Il modello entrava in loop sugli elenchi, ripetendo la stessa riga a oltranza.
+      frequency_penalty: 0.6,
+      presence_penalty: 0.3,
       // Qwen3 ragiona ad alta voce per default: i blocchi <think> finivano in pagina e
       // si mangiavano il poco contesto rimasto, troncando la risposta vera.
       extra_body: { enable_thinking: false },

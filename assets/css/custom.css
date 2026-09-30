@@ -504,33 +504,33 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 }
 
 /* ---------- CV chat ---------- */
-/* La pagina è solo la chat: il CV non viene reso, vive nel tag JSON per il modello. */
-.cv-page .cv-chat {
+/* Il CV non viene mai reso in pagina: vive nel tag JSON, serve solo al modello. */
+.cv-chat-block .cv-chat {
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--bg-elevated);
   padding: 2rem 2.2rem;
   margin: 2.4rem 0 0;
 }
-.cv-page .cv-chat p {
+.cv-chat-block .cv-chat p {
   text-align: left;
   font-size: 1.45rem;
   line-height: 1.7;
   margin: 0 0 1.2rem;
 }
-.cv-page .cv-chat p:last-child { margin-bottom: 0; }
-.cv-page .cv-checking,
-.cv-page .cv-note { font-size: 1.25rem; color: var(--muted); }
+.cv-chat-block .cv-chat p:last-child { margin-bottom: 0; }
+.cv-chat-block .cv-checking,
+.cv-chat-block .cv-note { font-size: 1.25rem; color: var(--muted); }
 
 /* Stato 1 — benvenuto */
-.cv-page .cv-intro-title {
+.cv-chat-block .cv-intro-title {
   font-family: var(--mono);
   font-size: 1.3rem;
   color: var(--accent);
   letter-spacing: 0.04em;
   margin: 0 0 1.4rem;
 }
-.cv-page .cv-start {
+.cv-chat-block .cv-start {
   font-family: var(--mono);
   font-size: 1.35rem;
   color: var(--accent);
@@ -541,29 +541,29 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   margin-top: 0.6rem;
   cursor: pointer;
 }
-.cv-page .cv-start:hover,
-.cv-page .cv-start:focus-visible { background: var(--accent); color: var(--bg); }
-.cv-page .cv-start:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cv-chat-block .cv-start:hover,
+.cv-chat-block .cv-start:focus-visible { background: var(--accent); color: var(--bg); }
+.cv-chat-block .cv-start:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Stato 2 — download */
-.cv-page .cv-bar {
+.cv-chat-block .cv-bar {
   height: 2px;
   background: var(--line);
   border-radius: 2px;
   overflow: hidden;
   margin: 0 0 1rem;
 }
-.cv-page .cv-bar span {
+.cv-chat-block .cv-bar span {
   display: block;
   height: 100%;
   width: 0;
   background: var(--accent);
   transition: width 0.3s ease;
 }
-.cv-page .cv-progress { font-family: var(--mono); font-size: 1.25rem; color: var(--ink); }
+.cv-chat-block .cv-progress { font-family: var(--mono); font-size: 1.25rem; color: var(--ink); }
 
 /* Stato 3 — conversazione */
-.cv-page .cv-log {
+.cv-chat-block .cv-log {
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
@@ -571,18 +571,20 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   max-height: 46rem;
   overflow-y: auto;
 }
-.cv-page .cv-msg { display: flex; gap: 1rem; }
-.cv-page .cv-msg .who {
+.cv-chat-block .cv-msg { display: flex; gap: 1rem; }
+.cv-chat-block .cv-msg .who {
   flex: 0 0 1.6rem;
   font-family: var(--mono);
   font-size: 1.3rem;
   color: var(--accent);
   line-height: 1.7;
 }
-.cv-page .cv-msg .text { flex: 1 1 auto; min-width: 0; }
-.cv-page .cv-msg.is-user .text { color: var(--muted); }
-.cv-page .cv-ask { display: flex; gap: 1rem; align-items: center; }
-.cv-page .cv-ask input {
+.cv-chat-block .cv-msg .text { flex: 1 1 auto; min-width: 0; }
+/* Il modello impagina con elenchi: gli a capo devono sopravvivere, senza costruire HTML. */
+.cv-chat-block .cv-msg .text p { white-space: pre-wrap; }
+.cv-chat-block .cv-msg.is-user .text { color: var(--muted); }
+.cv-chat-block .cv-ask { display: flex; gap: 1rem; align-items: center; }
+.cv-chat-block .cv-ask input {
   flex: 1 1 auto;
   min-width: 0;
   background: var(--bg);
@@ -593,10 +595,10 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   font-family: var(--mono);
   font-size: 1.3rem;
 }
-.cv-page .cv-ask input::placeholder { color: var(--muted); }
-.cv-page .cv-ask input:focus-visible,
-.cv-page .cv-send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.cv-page .cv-send {
+.cv-chat-block .cv-ask input::placeholder { color: var(--muted); }
+.cv-chat-block .cv-ask input:focus-visible,
+.cv-chat-block .cv-send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cv-chat-block .cv-send {
   flex: 0 0 auto;
   font-family: var(--mono);
   font-size: 1.3rem;
@@ -607,15 +609,15 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   padding: 1rem 1.4rem;
   cursor: pointer;
 }
-.cv-page .cv-send:hover:not(:disabled) { border-color: var(--accent); }
-.cv-page .cv-send:disabled { color: var(--muted); cursor: default; }
-.cv-page .cv-examples {
+.cv-chat-block .cv-send:hover:not(:disabled) { border-color: var(--accent); }
+.cv-chat-block .cv-send:disabled { color: var(--muted); cursor: default; }
+.cv-chat-block .cv-examples {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem 1.4rem;
   margin: 1.4rem 0 0;
 }
-.cv-page .cv-example {
+.cv-chat-block .cv-example {
   font-family: var(--mono);
   font-size: 1.2rem;
   color: var(--muted);
@@ -626,20 +628,32 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   cursor: pointer;
   text-align: left;
 }
-.cv-page .cv-example:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.cv-chat-block .cv-example:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* Stato 4 — non supportato */
-.cv-page .cv-blocked { color: var(--ink); }
-.cv-page .cv-fallback { font-size: 1.35rem; color: var(--muted); text-align: left; }
-.cv-page .cv-chat a,
-.cv-page .cv-fallback a { color: var(--accent); }
+.cv-chat-block .cv-blocked { color: var(--ink); }
+.cv-chat-block .cv-fallback { font-size: 1.35rem; color: var(--muted); text-align: left; }
+.cv-chat-block .cv-chat a,
+.cv-chat-block .cv-fallback a { color: var(--accent); }
 
 @media only screen and (max-width: 600px) {
-  .cv-page .cv-chat { padding: 1.6rem; }
-  .cv-page .cv-ask { flex-wrap: wrap; }
-  .cv-page .cv-send { width: 100%; }
+  .cv-chat-block .cv-chat { padding: 1.6rem; }
+  .cv-chat-block .cv-ask { flex-wrap: wrap; }
+  .cv-chat-block .cv-send { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cv-page .cv-bar span { transition: none; }
+  .cv-chat-block .cv-bar span { transition: none; }
+}
+
+/* Il blocco chat sta in fondo alla pagina about: va staccato dal testo che lo precede. */
+.cv-chat-block {
+  margin-top: 4rem;
+  padding-top: 2.4rem;
+  border-top: 1px solid var(--line);
+}
+.cv-chat-block .cv-chat-title {
+  font-size: 1.8rem;
+  margin: 0 0 0.6rem;
+  text-align: left;
 }
