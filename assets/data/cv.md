@@ -23,32 +23,34 @@ In Santagostino lavora dall'agosto 2019: circa sette anni.
 
 ## Esperienza
 
-**Santagostino** — dall'agosto 2019 a oggi, Milano. Tre ruoli in successione:
-Chief Software Architect & Full-stack Developer (da maggio 2020);
-Cloud Architect & Full-stack Developer (novembre 2019 - maggio 2020), middleware full cloud che
-collega tutti gli applicativi aziendali sotto un unico layer;
-Software Architect & PHP Full-stack Developer (agosto - novembre 2019), nuova piattaforma
-clinica del poliambulatorio: cartella clinica, dashboard amministrative, strumenti per i medici,
-con microservizi, API REST, container e cloud.
+Cinque datori di lavoro in tutto, dal più recente al più vecchio.
 
-**Deloitte** — Technology Consultant, gennaio - luglio 2019, Milano.
+1. **Santagostino**, Milano — da agosto 2019 a oggi. Tre ruoli in successione: Chief Software
+   Architect & Full-stack Developer (da maggio 2020); Cloud Architect & Full-stack Developer
+   (novembre 2019 - maggio 2020), middleware full cloud che collega tutti gli applicativi
+   aziendali sotto un unico layer; Software Architect & PHP Full-stack Developer (agosto -
+   novembre 2019), nuova piattaforma clinica del poliambulatorio con microservizi, API REST,
+   container e cloud.
 
-**Link Up** — ottobre 2011 - gennaio 2019, Cinisello Balsamo. Due ruoli:
-Full-stack Developer & Software Architect (giugno 2018 - gennaio 2019), con responsabilità sul
-team di sviluppo e sulle scelte tecnologiche;
-PHP Developer & Software Engineer (gennaio 2016 - giugno 2018) e prima PHP Developer (ottobre
-2011 - gennaio 2016). Progetti: SpineREG, registro operatorio di chirurgia ortopedica; DataREG;
-Biobank, gestione dati di biobanca; CloudMED, cartella clinica ambulatoriale; HumanaPRO,
-gestione agenti; un editor di immagini e DICOM in HTML5; piattaforme per osteopatia e per la
-gestione di commesse industriali. Nello stesso periodo: tutor di stagisti universitari con
-l'Università di Milano-Bicocca, e gestione sistemistica di datacenter VMware e macchine Linux.
+2. **Deloitte**, Milano — da gennaio a luglio 2019. Technology Consultant.
 
-**Freelance** — gennaio 2009 - ottobre 2011. Applicazioni web per gestione commesse (cloudGEST),
-sales force management (cloudPharma) e una piattaforma per poliambulatorio multicentrico (eCMS).
+3. **Link Up**, Cinisello Balsamo — da ottobre 2011 a gennaio 2019. Full-stack Developer &
+   Software Architect (giugno 2018 - gennaio 2019), con responsabilità sul team e sulle scelte
+   tecnologiche; PHP Developer & Software Engineer (gennaio 2016 - giugno 2018); PHP Developer
+   (ottobre 2011 - gennaio 2016). Progetti: SpineREG, registro operatorio di chirurgia
+   ortopedica; DataREG; Biobank, gestione dati di biobanca; CloudMED, cartella clinica
+   ambulatoriale; HumanaPRO, gestione agenti; un editor di immagini e DICOM in HTML5;
+   piattaforme per osteopatia e per la gestione di commesse industriali. Nello stesso periodo:
+   tutor di stagisti universitari con l'Università di Milano-Bicocca, e gestione sistemistica di
+   datacenter VMware e macchine Linux.
 
-**Secur-k** — 2007 - 2009, analista programmatore PHP e DBA. Siti web e un applicativo per
-schede di lavorazione e gestione magazzino, con preventivi immediati e stampa delle schede
-tecniche; personalizzazioni di osCommerce e VirtueMart.
+4. **Freelance** — da gennaio 2009 a ottobre 2011. Applicazioni web per gestione commesse
+   (cloudGEST), sales force management (cloudPharma) e una piattaforma per poliambulatorio
+   multicentrico (eCMS).
+
+5. **Secur-k** — dal 2007 al 2009. Analista programmatore PHP e DBA: siti web e un applicativo
+   per schede di lavorazione e gestione magazzino, con preventivi immediati e stampa delle
+   schede tecniche; personalizzazioni di osCommerce e VirtueMart.
 
 ## Formazione
 
