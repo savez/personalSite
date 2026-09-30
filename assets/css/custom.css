@@ -657,3 +657,15 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   margin: 0 0 0.6rem;
   text-align: left;
 }
+
+/* Il modello caricato resta dichiarato in ogni stato, sotto il riquadro della chat. */
+.cv-chat-block .cv-model {
+  font-size: 1.15rem;
+  color: var(--muted);
+  text-align: left;
+  margin: 0.9rem 0 0;
+}
+.cv-chat-block .cv-model a { color: var(--muted); border-bottom: 1px solid var(--line); }
+.cv-chat-block .cv-model a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.cv-chat-block .cv-model[data-model-state="ready"] { color: var(--accent); }
+.cv-chat-block .cv-model[data-model-state="ready"] a { color: var(--accent); }

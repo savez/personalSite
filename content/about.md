@@ -33,6 +33,6 @@ IoT e domotica, dove la teoria diventa pratica.
   <div class="entry-body">{{< social >}}</div>
 </div>
 
-> <span class="emoji">✨</span> "Architettura, innovazione e sperimentazione: il software come strumento per creare valore reale."
+> <span class="emoji">✨</span> "Lo stress di oggi è il bug di domani."
 
 <p class="email mono">EM@il: saverio.menin[at]gmail.com</p>
