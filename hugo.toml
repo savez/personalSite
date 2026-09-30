@@ -117,12 +117,29 @@ stylesrc = [
 scriptsrc = [
   "'self'",
   "'unsafe-inline'",
+  # La chat del CV compila WebAssembly nel worker: senza questo token fallisce
+  # dentro il worker e il main thread vede solo un avvio che non arriva mai.
+  "'wasm-unsafe-eval'",
   "https://www.google-analytics.com",
   "https://cdn.jsdelivr.net/",
 ]
+
+# Il worker della chat sta sul nostro dominio: WebLLM non crea worker da sé,
+# quindi non serve blob:.
+workersrc = ["'self'"]
 prefetchsrc = ["'self'"]
 # connect-src directive – defines valid targets for to XMLHttpRequest (AJAX), WebSockets or EventSource
-connectsrc = ["'self'", "https://www.google-analytics.com"]
+# Wildcard e non host esatti per Hugging Face: la lista dei CDN è già cambiata due
+# volte (cdn-lfs-us-1.hf.co nel 2024, cas-bridge.xethub.hf.co nel 2026), e la CSP
+# viene ricontrollata dopo il redirect cross-origin.
+connectsrc = [
+  "'self'",
+  "https://www.google-analytics.com",
+  "https://huggingface.co",
+  "https://*.huggingface.co",
+  "https://*.hf.co",
+  "https://raw.githubusercontent.com",
+]
 
 [taxonomies]
 category = "categories"
@@ -170,17 +187,22 @@ weight = 2
 url = "/about"
 
 [[languages.en.menu.main]]
-name = "projects"
+name = "cv"
 weight = 3
+url = "cv/"
+
+[[languages.en.menu.main]]
+name = "projects"
+weight = 4
 url = "projects/"
 
 [[languages.en.menu.main]]
 name = "talks"
-weight = 4
+weight = 5
 url = "talks/"
 
 [[languages.en.menu.main]]
 name = "advisories"
-weight = 5
+weight = 6
 url = "advisories/"
 

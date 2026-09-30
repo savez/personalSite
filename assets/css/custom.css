@@ -502,3 +502,144 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 @media only screen and (max-width: 600px) {
   .entry.project .proj-mark { margin: 0; }
 }
+
+/* ---------- CV chat ---------- */
+/* La pagina è solo la chat: il CV non viene reso, vive nel tag JSON per il modello. */
+.cv-page .cv-chat {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  padding: 2rem 2.2rem;
+  margin: 2.4rem 0 0;
+}
+.cv-page .cv-chat p {
+  text-align: left;
+  font-size: 1.45rem;
+  line-height: 1.7;
+  margin: 0 0 1.2rem;
+}
+.cv-page .cv-chat p:last-child { margin-bottom: 0; }
+.cv-page .cv-checking,
+.cv-page .cv-note { font-size: 1.25rem; color: var(--muted); }
+
+/* Stato 1 — benvenuto */
+.cv-page .cv-intro-title {
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  margin: 0 0 1.4rem;
+}
+.cv-page .cv-start {
+  font-family: var(--mono);
+  font-size: 1.35rem;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 1rem 1.8rem;
+  margin-top: 0.6rem;
+  cursor: pointer;
+}
+.cv-page .cv-start:hover,
+.cv-page .cv-start:focus-visible { background: var(--accent); color: var(--bg); }
+.cv-page .cv-start:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Stato 2 — download */
+.cv-page .cv-bar {
+  height: 2px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 0 0 1rem;
+}
+.cv-page .cv-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+.cv-page .cv-progress { font-family: var(--mono); font-size: 1.25rem; color: var(--ink); }
+
+/* Stato 3 — conversazione */
+.cv-page .cv-log {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  margin: 0 0 1.8rem;
+  max-height: 46rem;
+  overflow-y: auto;
+}
+.cv-page .cv-msg { display: flex; gap: 1rem; }
+.cv-page .cv-msg .who {
+  flex: 0 0 1.6rem;
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  color: var(--accent);
+  line-height: 1.7;
+}
+.cv-page .cv-msg .text { flex: 1 1 auto; min-width: 0; }
+.cv-page .cv-msg.is-user .text { color: var(--muted); }
+.cv-page .cv-ask { display: flex; gap: 1rem; align-items: center; }
+.cv-page .cv-ask input {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1rem 1.2rem;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 1.3rem;
+}
+.cv-page .cv-ask input::placeholder { color: var(--muted); }
+.cv-page .cv-ask input:focus-visible,
+.cv-page .cv-send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cv-page .cv-send {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1rem 1.4rem;
+  cursor: pointer;
+}
+.cv-page .cv-send:hover:not(:disabled) { border-color: var(--accent); }
+.cv-page .cv-send:disabled { color: var(--muted); cursor: default; }
+.cv-page .cv-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.4rem;
+  margin: 1.4rem 0 0;
+}
+.cv-page .cv-example {
+  font-family: var(--mono);
+  font-size: 1.2rem;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  padding: 0.2rem 0;
+  cursor: pointer;
+  text-align: left;
+}
+.cv-page .cv-example:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Stato 4 — non supportato */
+.cv-page .cv-blocked { color: var(--ink); }
+.cv-page .cv-fallback { font-size: 1.35rem; color: var(--muted); text-align: left; }
+.cv-page .cv-chat a,
+.cv-page .cv-fallback a { color: var(--accent); }
+
+@media only screen and (max-width: 600px) {
+  .cv-page .cv-chat { padding: 1.6rem; }
+  .cv-page .cv-ask { flex-wrap: wrap; }
+  .cv-page .cv-send { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-page .cv-bar span { transition: none; }
+}

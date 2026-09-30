@@ -1,0 +1,10 @@
+{{/*
+  Shadow del partial del tema (themes/hugo-coder/layouts/partials/csp.html).
+  Il tema ha la lista di direttive cablata nel printf: `worker-src` non esiste e non si può
+  aggiungere da configurazione, serve alla chat del CV che gira in un Web Worker.
+
+  Attenzione a manutenerlo: una chiave assente da [params.csp] non ricade su `default-src`,
+  `delimit` su un valore nil rende stringa vuota e la direttiva esce vuota, cioè blocca tutto
+  per quel tipo di risorsa. Aggiungendo una direttiva qui, aggiungi sempre la chiave in hugo.toml.
+*/}}
+{{ printf `<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; block-all-mixed-content; default-src 'self'; child-src %s; font-src %s; form-action %s; frame-src %s; img-src %s; object-src %s; style-src %s; script-src %s; connect-src %s; worker-src %s;">` (delimit .Site.Params.csp.childsrc " ") (delimit .Site.Params.csp.fontsrc " ") (delimit .Site.Params.csp.formaction " ") (delimit .Site.Params.csp.framesrc " ") (delimit .Site.Params.csp.imgsrc " ") (delimit .Site.Params.csp.objectsrc " ") (delimit .Site.Params.csp.stylesrc " ") (delimit .Site.Params.csp.scriptsrc " ") (delimit .Site.Params.csp.connectsrc " ") (delimit .Site.Params.csp.workersrc " ") | safeHTML }}
