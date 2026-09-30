@@ -8,6 +8,9 @@ import { CreateWebWorkerMLCEngine, hasModelInCache } from "__WEBLLM__";
 
 const MODEL_ID = "Qwen3-1.7B-q4f32_1-MLC";
 const MODEL_MB = 985;
+const MODEL_LABEL = "Qwen3 1.7B";
+const MODEL_QUANT = "quantizzato a 4 bit";
+const MODEL_CARD = "https://huggingface.co/Qwen/Qwen3-1.7B";
 const LINKEDIN = "https://www.linkedin.com/in/saveriomenin/";
 
 // Finestra da 4096 token: il corpus ne occupa ~950, il resto è la conversazione.
@@ -37,12 +40,6 @@ const EXAMPLES = [
 
 const root = document.querySelector(".cv-chat");
 const corpusEl = document.getElementById("cv-corpus");
-if (root && corpusEl) {
-  init().catch((err) => {
-    console.error(err);
-    showBlocked("no-adapter");
-  });
-}
 
 // ---------------------------------------------------------------- supporto
 
@@ -77,6 +74,30 @@ function setState(state, nodes) {
   root.replaceChildren(...nodes);
 }
 
+// Il modello in esecuzione resta sempre dichiarato, in ogni stato: chi legge deve poter
+// sapere cosa gli sta girando nel browser senza aprire gli strumenti da sviluppatore.
+const MODEL_STATUS = {
+  checking: "controllo del dispositivo in corso",
+  idle: "non ancora caricato",
+  loading: "caricamento in corso",
+  ready: "in esecuzione nel tuo browser",
+  error: "caricamento non riuscito",
+  blocked: "non avviabile su questo dispositivo",
+};
+
+function setModelBadge(state) {
+  const badge = document.getElementById("cv-model");
+  if (!badge) return;
+  badge.replaceChildren();
+  badge.append("modello: ");
+  const link = el("a", null, MODEL_LABEL);
+  link.href = MODEL_CARD;
+  link.target = "_blank";
+  link.rel = "noopener";
+  badge.append(link, ` (${MODEL_QUANT}) · ${MODEL_STATUS[state] || state}`);
+  badge.dataset.modelState = state;
+}
+
 function linkedinLine() {
   const p = el("p", "cv-fallback");
   p.append("Il curriculum completo è su ");
@@ -89,6 +110,7 @@ function linkedinLine() {
 }
 
 function showBlocked(reason) {
+  setModelBadge("blocked");
   setState("blocked", [
     el("p", "cv-blocked", BLOCKED_REASONS[reason] || BLOCKED_REASONS["no-webgpu"]),
     linkedinLine(),
@@ -133,6 +155,7 @@ async function showWelcome() {
   button.addEventListener("click", () => start());
   nodes.push(button);
 
+  setModelBadge("idle");
   setState("idle", nodes);
 }
 
@@ -143,6 +166,7 @@ function showLoading() {
   const status = el("p", "cv-progress", "Preparo il modello…");
   status.setAttribute("aria-live", "polite");
 
+  setModelBadge("loading");
   setState("loading", [
     bar,
     status,
@@ -170,6 +194,7 @@ function showError(message, retry) {
   const button = el("button", "cv-start", "Riprova");
   button.type = "button";
   button.addEventListener("click", retry);
+  setModelBadge("error");
   setState("error", [el("p", "cv-blocked", message), button, linkedinLine()]);
 }
 
@@ -328,6 +353,7 @@ function showConversation() {
     examples.append(button);
   }
 
+  setModelBadge("ready");
   setState("ready", [log, ask, examples]);
 
   const corpus = JSON.parse(corpusEl.textContent);
@@ -431,10 +457,20 @@ function showConversation() {
 // ------------------------------------------------------------------- avvio
 
 async function init() {
+  setModelBadge("checking");
   const support = await checkSupport();
   if (!support.ok) {
     showBlocked(support.reason);
     return;
   }
   await showWelcome();
+}
+
+// L'avvio sta in fondo di proposito: init() usa costanti dichiarate sotto la sua definizione,
+// e chiamarlo prima le trova nella zona morta temporale.
+if (root && corpusEl) {
+  init().catch((err) => {
+    console.error(err);
+    showBlocked("no-adapter");
+  });
 }
