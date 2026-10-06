@@ -514,18 +514,14 @@ function showConversation() {
 
 async function init() {
   setModelBadge("checking");
-  const support = await checkSupport();
-  if (!support.ok) {
-    showBlocked(support.reason, support.detail);
-    return;
-  }
-  await showWelcome();
-}
-
-// L'avvio sta in fondo di proposito: init() usa costanti dichiarate sotto la sua definizione,
-// e chiamarlo prima le trova nella zona morta temporale.
-if (root && corpusEl) {
-  init().catch((err) => {
+  try {
+    const support = await checkSupport();
+    if (!support.ok) {
+      showBlocked(support.reason, support.detail);
+      return;
+    }
+    await showWelcome();
+  } catch (err) {
     console.error(err);
     showError(
       "Il controllo del dispositivo non è riuscito.",
@@ -533,5 +529,11 @@ if (root && corpusEl) {
       err,
       "controllo del dispositivo",
     );
-  });
+  }
+}
+
+// L'avvio sta in fondo di proposito: init() usa costanti dichiarate sotto la sua definizione,
+// e chiamarlo prima le trova nella zona morta temporale.
+if (root && corpusEl) {
+  init();
 }
