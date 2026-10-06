@@ -130,7 +130,7 @@ async function showWelcome() {
     el(
       "p",
       null,
-      "Il modello — Qwen3, 0,6 miliardi di parametri — viene scaricato sul tuo dispositivo ed eseguito lì. Le domande non escono dal browser: non arrivano a un server, nemmeno al mio, e nessuno le registra.",
+      "Il modello — Qwen3, 1,7 miliardi di parametri — viene scaricato sul tuo dispositivo ed eseguito lì. Le domande non escono dal browser: non arrivano a un server, nemmeno al mio, e nessuno le registra.",
     ),
   ];
 
@@ -394,9 +394,20 @@ function showConversation() {
     const target = addMessage("assistant", "…");
 
     try {
-      await answer(question, target);
+      try {
+        await answer(question, target);
+      } catch (first) {
+        if (isContextError(first)) throw first;
+        // Un errore a metà generazione può lasciare il motore in uno stato sporco, e alcune
+        // combinazioni di parametri non vanno d'accordo con certi dispositivi: si ripulisce
+        // la chat e si riprova una volta con i parametri minimi.
+        console.warn("generazione fallita, riprovo con parametri minimi", first);
+        await engine.resetChat().catch(() => {});
+        target.textContent = "…";
+        await answer(question, target, true);
+      }
     } catch (err) {
-      if (String(err && err.name).includes("ContextWindowSizeExceeded")) {
+      if (isContextError(err)) {
         history = [];
         target.textContent =
           "La conversazione è diventata troppo lunga: riparto da capo, riprova la domanda.";
@@ -411,25 +422,36 @@ function showConversation() {
     }
   }
 
-  async function answer(question, target) {
+  // Dal worker l'errore arriva come Error generico: il nome può andare perso, quindi si
+  // controlla anche il messaggio.
+  function isContextError(err) {
+    return /ContextWindowSizeExceeded|context window size/i.test(
+      `${err && err.name} ${err && err.message}`,
+    );
+  }
+
+  async function answer(question, target, minimal = false) {
     const messages = [
       { role: "system", content: system },
       ...history.slice(-MAX_TURNS * 2),
       { role: "user", content: question },
     ];
 
-    const stream = await engine.chat.completions.create({
-      messages,
-      stream: true,
-      temperature: 0.1,
-      max_tokens: 300,
-      // Il modello entrava in loop sugli elenchi, ripetendo la stessa riga a oltranza.
-      frequency_penalty: 0.6,
-      presence_penalty: 0.3,
-      // Qwen3 ragiona ad alta voce per default: i blocchi <think> finivano in pagina e
-      // si mangiavano il poco contesto rimasto, troncando la risposta vera.
-      extra_body: { enable_thinking: false },
-    });
+    const options = minimal
+      ? { messages, stream: true, temperature: 0.1, max_tokens: 300 }
+      : {
+          messages,
+          stream: true,
+          temperature: 0.1,
+          max_tokens: 300,
+          // Il modello entrava in loop sugli elenchi, ripetendo la stessa riga a oltranza.
+          frequency_penalty: 0.6,
+          presence_penalty: 0.3,
+          // Qwen3 ragiona ad alta voce per default: i blocchi <think> finivano in pagina e
+          // si mangiavano il poco contesto rimasto, troncando la risposta vera.
+          extra_body: { enable_thinking: false },
+        };
+    const stream = await engine.chat.completions.create(options);
 
     let text = "";
     for await (const chunk of stream) {
