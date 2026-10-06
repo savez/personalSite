@@ -85,7 +85,7 @@ const MODEL_STATUS = {
   idle: "non ancora caricato",
   loading: "caricamento in corso",
   ready: "in esecuzione nel tuo browser",
-  error: "caricamento non riuscito",
+  error: "non in esecuzione",
   blocked: "non avviabile su questo dispositivo",
 };
 
@@ -217,7 +217,7 @@ function showError(message, retry, err, stage) {
   setModelBadge("error");
   setState("error", [
     el("p", "cv-blocked", message),
-    errorDiagnostics(stage, [err]),
+    errorDiagnostics(stage, Array.isArray(err) ? err : [err]),
     button,
     linkedinLine(),
   ]);
@@ -226,11 +226,27 @@ function showError(message, retry, err, stage) {
 // -------------------------------------------------------------- avvio motore
 
 let engine = null;
+let worker = null;
+
+function disposeEngine() {
+  // Non chiamare unload/resetChat su un motore che ha già perso gli oggetti GPU.
+  worker?.terminate();
+  worker = null;
+  engine = null;
+}
+
+function isGpuError(err) {
+  return /mapAsync|GPUBuffer|device.{0,20}lost|GPUDevice|already been disposed/i.test(
+    `${err?.name} ${err?.message} ${String(err)}`,
+  );
+}
 
 async function start() {
+  if (root.dataset.state === "loading") return;
+  disposeEngine();
   const onProgress = showLoading();
   try {
-    const worker = new Worker(root.dataset.worker, { type: "module" });
+    worker = new Worker(root.dataset.worker, { type: "module" });
 
     // Se il worker muore (CSP, WebAssembly bloccata, import fallito) nessuno rifiuta la
     // promise: il main thread resterebbe in attesa per sempre. Lo trasformiamo in errore.
@@ -251,6 +267,7 @@ async function start() {
     }
     showConversation();
   } catch (err) {
+    disposeEngine();
     console.error(err);
     showError(
       "Il caricamento del modello non è riuscito. Può succedere se la connessione si è interrotta a metà.",
@@ -426,18 +443,27 @@ function showConversation() {
         await answer(question, target);
       } catch (first) {
         errors.push(first);
-        if (isContextError(first)) throw first;
+        if (isContextError(first) || isGpuError(first)) throw first;
         // Un errore a metà generazione può lasciare il motore in uno stato sporco, e alcune
         // combinazioni di parametri non vanno d'accordo con certi dispositivi: si ripulisce
         // la chat e si riprova una volta con i parametri minimi.
         console.warn("generazione fallita, riprovo con parametri minimi", first);
-        await engine.resetChat().catch((err) => errors.push(err));
+        await engine.resetChat();
         target.textContent = "…";
         await answer(question, target, true);
       }
     } catch (err) {
       if (!errors.includes(err)) errors.push(err);
-      if (isContextError(err)) {
+      if (isGpuError(err)) {
+        disposeEngine();
+        showError(
+          "La GPU ha interrotto la generazione e il modello non è più utilizzabile. Riprova per ricaricarlo; se succede ancora, chiudi altre schede o usa un computer. Su alcuni dispositivi mobili la memoria disponibile non basta.",
+          () => start(),
+          errors,
+          "generazione della risposta",
+        );
+        return;
+      } else if (isContextError(err)) {
         history = [];
         target.textContent =
           "La conversazione è diventata troppo lunga: riparto da capo, riprova la domanda.";
@@ -446,21 +472,22 @@ function showConversation() {
         target.textContent = "Qualcosa è andato storto nella generazione. Riprova.";
       }
     } finally {
-      if (errors.length) {
+      if (root.dataset.state === "ready" && errors.length) {
         target.parentElement.append(errorDiagnostics("generazione della risposta", errors));
         log.scrollTop = log.scrollHeight;
       }
       busy = false;
-      send.disabled = false;
-      input.focus();
+      if (root.dataset.state === "ready") {
+        send.disabled = false;
+        input.focus();
+      }
     }
   }
 
-  // Dal worker l'errore arriva come Error generico: il nome può andare perso, quindi si
-  // controlla anche il messaggio.
+  // Dal worker l'errore può arrivare come stringa anziché come oggetto Error.
   function isContextError(err) {
     return /ContextWindowSizeExceeded|context window size/i.test(
-      `${err && err.name} ${err && err.message}`,
+      `${err?.name} ${err?.message} ${String(err)}`,
     );
   }
 
