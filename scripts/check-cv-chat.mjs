@@ -139,6 +139,22 @@ test('un errore GPU nel reset conserva entrambi gli errori e non ritenta', async
   assert.ok(diagnostics.includes('already been disposed'));
 });
 
+test('gli errori GPU serializzati dal worker sono riconosciuti come fatali', async () => {
+  for (const message of [
+    "AbortError: Failed to execute 'mapAsync' on 'GPUBuffer'",
+    'Error: The current Object has already been disposed',
+    'Error: Device was lost',
+  ]) {
+    const chat = setup({ failures: [message] });
+    await chat.evaluate('start()');
+    await chat.submit();
+    assert.equal(chat.root.dataset.state, 'error');
+    assert.equal(chat.engines[0].resets, 0);
+    assert.equal(chat.engines[0].calls.length, 1);
+    assert.equal(chat.workers[0].terminated, true);
+  }
+});
+
 test('un errore GPU nel secondo tentativo termina il worker', async () => {
   const chat = setup({ failures: [new Error('parametro non supportato'), new Error('GPUBuffer')] });
   await chat.evaluate('start()');
@@ -181,4 +197,14 @@ test('le domande fuori tema non arrivano al modello', async () => {
   await chat.submit('Scrivimi una poesia');
   assert.equal(chat.engines[0].calls.length, 0);
   assert.equal(chat.root.dataset.state, 'ready');
+});
+
+test('gli errori di contesto serializzati non fanno ritentare la generazione', async () => {
+  const chat = setup({ failures: ['Error: context window size exceeded'] });
+  await chat.evaluate('start()');
+  await chat.submit();
+  assert.equal(chat.root.dataset.state, 'ready');
+  assert.equal(chat.engines[0].calls.length, 1);
+  assert.equal(chat.engines[0].resets, 0);
+  assert.ok(!chat.workers[0].terminated);
 });

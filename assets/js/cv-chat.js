@@ -237,7 +237,7 @@ function disposeEngine() {
 
 function isGpuError(err) {
   return /mapAsync|GPUBuffer|device.{0,20}lost|GPUDevice|already been disposed/i.test(
-    `${err?.name} ${err?.message}`,
+    `${err?.name} ${err?.message} ${String(err)}`,
   );
 }
 
@@ -484,11 +484,10 @@ function showConversation() {
     }
   }
 
-  // Dal worker l'errore arriva come Error generico: il nome può andare perso, quindi si
-  // controlla anche il messaggio.
+  // Dal worker l'errore può arrivare come stringa anziché come oggetto Error.
   function isContextError(err) {
     return /ContextWindowSizeExceeded|context window size/i.test(
-      `${err && err.name} ${err && err.message}`,
+      `${err?.name} ${err?.message} ${String(err)}`,
     );
   }
 
