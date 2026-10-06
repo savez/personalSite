@@ -4,13 +4,30 @@
 // nel system prompt, che con una finestra da 4096 token è il vincolo che governa tutto.
 
 // La libreria è vendorizzata: vedi assets/js/vendor/. Il percorso lo riscrive Hugo.
-import { CreateWebWorkerMLCEngine, hasModelInCache } from "__WEBLLM__";
+import { CreateWebWorkerMLCEngine, deleteModelAllInfoInCache, hasModelInCache } from "__WEBLLM__";
 
-const MODEL_ID = "Qwen3-1.7B-q4f32_1-MLC";
-const MODEL_MB = 985;
-const MODEL_LABEL = "Qwen3 1.7B";
+const MODELS = [
+  {
+    id: "Qwen3-1.7B-q4f32_1-MLC",
+    label: "Qwen3 1.7B · più accurato, richiede più memoria",
+    name: "Qwen3 1.7B",
+    card: "https://huggingface.co/Qwen/Qwen3-1.7B",
+  },
+  {
+    id: "Qwen3-1.7B-q4f16_1-MLC",
+    label: "Qwen3 1.7B · meno memoria GPU",
+    name: "Qwen3 1.7B",
+    card: "https://huggingface.co/Qwen/Qwen3-1.7B",
+  },
+  {
+    id: "Qwen3-0.6B-q4f16_1-MLC",
+    label: "Qwen3 0.6B · più leggero, può perdere precisione",
+    name: "Qwen3 0.6B",
+    card: "https://huggingface.co/Qwen/Qwen3-0.6B",
+  },
+];
+let selectedModel = MODELS[0];
 const MODEL_QUANT = "quantizzato a 4 bit";
-const MODEL_CARD = "https://huggingface.co/Qwen/Qwen3-1.7B";
 const LINKEDIN = "https://www.linkedin.com/in/saveriomenin/";
 
 // Finestra da 4096 token: il corpus ne occupa ~950, il resto è la conversazione.
@@ -99,8 +116,8 @@ function setModelBadge(state) {
   if (!badge) return;
   badge.replaceChildren();
   badge.append("modello: ");
-  const link = el("a", null, MODEL_LABEL);
-  link.href = MODEL_CARD;
+  const link = el("a", null, selectedModel.name);
+  link.href = selectedModel.card;
   link.target = "_blank";
   link.rel = "noopener";
   badge.append(link, ` (${MODEL_QUANT}) · ${MODEL_STATUS[state] || state}`);
@@ -123,7 +140,7 @@ function errorDiagnostics(stage, errors) {
   box.append(el("p", null, "Dettagli tecnici — puoi copiarli o fare uno screenshot"));
   const text = [
     `Fase: ${stage}`,
-    `Modello: ${MODEL_ID}`,
+    `Modello: ${selectedModel.id}`,
     `Browser: ${navigator.userAgent}`,
     ...errors.map((err, index) =>
       `Errore ${index + 1}: ${err?.stack || (err?.message ? `${err.name || "Error"}: ${err.message}` : String(err))}`,
@@ -143,8 +160,6 @@ function showBlocked(reason, detail) {
 }
 
 async function showWelcome() {
-  const cached = await hasModelInCache(MODEL_ID).catch(() => false);
-
   const nodes = [
     el("p", "cv-intro-title mono", "// tutto nel tuo browser"),
     el(
@@ -155,33 +170,69 @@ async function showWelcome() {
     el(
       "p",
       null,
-      "Il modello — Qwen3, 1,7 miliardi di parametri — viene scaricato sul tuo dispositivo ed eseguito lì. Le domande non escono dal browser: non arrivano a un server, nemmeno al mio, e nessuno le registra.",
+      "Scegli quale modello scaricare ed eseguire sul tuo dispositivo. Le domande restano nel browser: non arrivano a un server, nemmeno al mio, e nessuno le registra.",
     ),
   ];
 
-  if (!cached) {
-    nodes.push(
-      el(
-        "p",
-        "cv-note",
-        `Al primo avvio scarica circa ${MODEL_MB} MB, poi resta in cache e le volte successive parte subito.`,
-      ),
-    );
-  } else {
-    nodes.push(el("p", "cv-note", "Il modello è già sul tuo dispositivo: parte subito."));
+  const label = el("label", "cv-model-label", "Modello da usare");
+  label.htmlFor = "cv-model-select";
+  const select = el("select", "cv-model-select");
+  select.id = "cv-model-select";
+  for (const model of MODELS) {
+    const option = el("option", null, model.label);
+    option.value = model.id;
+    option.selected = model.id === selectedModel.id;
+    select.append(option);
   }
+  const modelNote = el("p", "cv-note", "Controllo la cache del modello…");
+  select.addEventListener("change", async () => {
+    selectedModel = MODELS.find((model) => model.id === select.value) || MODELS[0];
+    setModelBadge("idle");
+    modelNote.textContent = "Controllo la cache del modello…";
+    await updateSelectionNote(modelNote, startButton);
+  });
+  nodes.push(label, select, modelNote);
 
-  const button = el(
-    "button",
-    "cv-start",
-    cached ? "Avvia la chat" : `Avvia la chat — scarica ~${MODEL_MB} MB`,
-  );
-  button.type = "button";
-  button.addEventListener("click", () => start());
-  nodes.push(button);
+  const startButton = el("button", "cv-start", "Controllo cache…");
+  startButton.type = "button";
+  startButton.disabled = true;
+  startButton.addEventListener("click", () => start());
+  nodes.push(startButton);
+
+  const cacheStatus = el("p", "cv-cache-status");
+  cacheStatus.setAttribute("aria-live", "polite");
+  const clearButton = el("button", "cv-clear-cache", "Rimuovi cache dei modelli");
+  clearButton.type = "button";
+  clearButton.addEventListener("click", async () => {
+    clearButton.disabled = true;
+    cacheStatus.textContent = "Rimuovo i modelli scaricati…";
+    try {
+      await Promise.all(MODELS.map((model) => deleteModelAllInfoInCache(model.id)));
+      cacheStatus.textContent = "Cache dei tre modelli rimossa.";
+      await updateSelectionNote(modelNote, startButton);
+    } catch (err) {
+      console.error(err);
+      cacheStatus.textContent = "Non è stato possibile rimuovere la cache. Riprova.";
+    } finally {
+      clearButton.disabled = false;
+    }
+  });
+  nodes.push(clearButton, cacheStatus);
 
   setModelBadge("idle");
   setState("idle", nodes);
+  await updateSelectionNote(modelNote, startButton);
+}
+
+async function updateSelectionNote(note, button) {
+  const modelId = selectedModel.id;
+  const cached = await hasModelInCache(modelId).catch(() => false);
+  if (selectedModel.id !== modelId) return;
+  note.textContent = cached
+    ? "Questo modello è già in cache e parte subito."
+    : "Al primo avvio il modello viene scaricato sul dispositivo e resta in cache.";
+  button.textContent = cached ? "Avvia la chat" : "Avvia la chat e scarica il modello";
+  button.disabled = false;
 }
 
 function showLoading() {
@@ -262,7 +313,7 @@ async function start() {
     });
 
     engine = await Promise.race([
-      CreateWebWorkerMLCEngine(worker, MODEL_ID, { initProgressCallback: onProgress }),
+      CreateWebWorkerMLCEngine(worker, selectedModel.id, { initProgressCallback: onProgress }),
       workerDied,
     ]);
     // Best effort: su Chrome e Firefox tiene la cache al riparo dagli sfratti,
