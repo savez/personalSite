@@ -632,6 +632,19 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 
 /* Stato 4 — non supportato */
 .cv-chat-block .cv-blocked { color: var(--ink); }
+.cv-chat-block .cv-diagnostics {
+  margin-top: 1rem;
+  min-width: 0;
+  font-size: 1.2rem;
+  text-align: left;
+}
+.cv-chat-block .cv-diagnostics pre {
+  font-family: var(--mono);
+  font-size: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
 .cv-chat-block .cv-fallback { font-size: 1.35rem; color: var(--muted); text-align: left; }
 .cv-chat-block .cv-chat a,
 .cv-chat-block .cv-fallback a { color: var(--accent); }
