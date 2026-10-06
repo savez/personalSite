@@ -52,10 +52,14 @@ async function checkSupport() {
   if (/iPhone|iPad|iPod/.test(ua)) return { ok: false, reason: "ios" };
   if (!navigator.gpu) return { ok: false, reason: "no-webgpu" };
 
-  const adapter = await navigator.gpu.requestAdapter().catch(() => null);
+  const adapter = await navigator.gpu.requestAdapter();
   if (!adapter) return { ok: false, reason: "no-adapter" };
   if (adapter.limits.maxStorageBufferBindingSize < 1 << 30) {
-    return { ok: false, reason: "small-gpu" };
+    return {
+      ok: false,
+      reason: "small-gpu",
+      detail: `maxStorageBufferBindingSize: ${adapter.limits.maxStorageBufferBindingSize} byte; richiesti: ${1 << 30} byte`,
+    };
   }
   return { ok: true };
 }
@@ -109,10 +113,26 @@ function linkedinLine() {
   return p;
 }
 
-function showBlocked(reason) {
+function errorDiagnostics(stage, errors) {
+  const box = el("div", "cv-diagnostics");
+  box.append(el("p", null, "Dettagli tecnici — puoi copiarli o fare uno screenshot"));
+  const text = [
+    `Fase: ${stage}`,
+    `Modello: ${MODEL_ID}`,
+    `Browser: ${navigator.userAgent}`,
+    ...errors.map((err, index) =>
+      `Errore ${index + 1}: ${err?.stack || (err?.message ? `${err.name || "Error"}: ${err.message}` : String(err))}`,
+    ),
+  ].join("\n\n");
+  box.append(el("pre", null, text));
+  return box;
+}
+
+function showBlocked(reason, detail) {
   setModelBadge("blocked");
   setState("blocked", [
     el("p", "cv-blocked", BLOCKED_REASONS[reason] || BLOCKED_REASONS["no-webgpu"]),
+    errorDiagnostics("controllo del dispositivo", [detail || reason]),
     linkedinLine(),
   ]);
 }
@@ -190,12 +210,17 @@ function showLoading() {
   };
 }
 
-function showError(message, retry) {
+function showError(message, retry, err, stage) {
   const button = el("button", "cv-start", "Riprova");
   button.type = "button";
   button.addEventListener("click", retry);
   setModelBadge("error");
-  setState("error", [el("p", "cv-blocked", message), button, linkedinLine()]);
+  setState("error", [
+    el("p", "cv-blocked", message),
+    errorDiagnostics(stage, [err]),
+    button,
+    linkedinLine(),
+  ]);
 }
 
 // -------------------------------------------------------------- avvio motore
@@ -230,6 +255,8 @@ async function start() {
     showError(
       "Il caricamento del modello non è riuscito. Può succedere se la connessione si è interrotta a metà.",
       () => start(),
+      err,
+      "caricamento del modello",
     );
   }
 }
@@ -392,21 +419,24 @@ function showConversation() {
     busy = true;
     send.disabled = true;
     const target = addMessage("assistant", "…");
+    const errors = [];
 
     try {
       try {
         await answer(question, target);
       } catch (first) {
+        errors.push(first);
         if (isContextError(first)) throw first;
         // Un errore a metà generazione può lasciare il motore in uno stato sporco, e alcune
         // combinazioni di parametri non vanno d'accordo con certi dispositivi: si ripulisce
         // la chat e si riprova una volta con i parametri minimi.
         console.warn("generazione fallita, riprovo con parametri minimi", first);
-        await engine.resetChat().catch(() => {});
+        await engine.resetChat().catch((err) => errors.push(err));
         target.textContent = "…";
         await answer(question, target, true);
       }
     } catch (err) {
+      if (!errors.includes(err)) errors.push(err);
       if (isContextError(err)) {
         history = [];
         target.textContent =
@@ -416,6 +446,10 @@ function showConversation() {
         target.textContent = "Qualcosa è andato storto nella generazione. Riprova.";
       }
     } finally {
+      if (errors.length) {
+        target.parentElement.append(errorDiagnostics("generazione della risposta", errors));
+        log.scrollTop = log.scrollHeight;
+      }
       busy = false;
       send.disabled = false;
       input.focus();
@@ -480,19 +514,26 @@ function showConversation() {
 
 async function init() {
   setModelBadge("checking");
-  const support = await checkSupport();
-  if (!support.ok) {
-    showBlocked(support.reason);
-    return;
+  try {
+    const support = await checkSupport();
+    if (!support.ok) {
+      showBlocked(support.reason, support.detail);
+      return;
+    }
+    await showWelcome();
+  } catch (err) {
+    console.error(err);
+    showError(
+      "Il controllo del dispositivo non è riuscito.",
+      () => init(),
+      err,
+      "controllo del dispositivo",
+    );
   }
-  await showWelcome();
 }
 
 // L'avvio sta in fondo di proposito: init() usa costanti dichiarate sotto la sua definizione,
 // e chiamarlo prima le trova nella zona morta temporale.
 if (root && corpusEl) {
-  init().catch((err) => {
-    console.error(err);
-    showBlocked("no-adapter");
-  });
+  init();
 }
