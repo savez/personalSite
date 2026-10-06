@@ -9,19 +9,19 @@ import { CreateWebWorkerMLCEngine, deleteModelAllInfoInCache, hasModelInCache } 
 const MODELS = [
   {
     id: "Qwen3-1.7B-q4f32_1-MLC",
-    label: "Qwen3 1.7B · più accurato, richiede più memoria",
+    label: "Qwen3 1.7B · circa 2,6 GB di memoria GPU",
     name: "Qwen3 1.7B",
     card: "https://huggingface.co/Qwen/Qwen3-1.7B",
   },
   {
     id: "Qwen3-1.7B-q4f16_1-MLC",
-    label: "Qwen3 1.7B · meno memoria GPU",
+    label: "Qwen3 1.7B · circa 2 GB di memoria GPU",
     name: "Qwen3 1.7B",
     card: "https://huggingface.co/Qwen/Qwen3-1.7B",
   },
   {
     id: "Qwen3-0.6B-q4f16_1-MLC",
-    label: "Qwen3 0.6B · più leggero, può perdere precisione",
+    label: "Qwen3 0.6B · circa 1,4 GB di memoria GPU, può perdere precisione",
     name: "Qwen3 0.6B",
     card: "https://huggingface.co/Qwen/Qwen3-0.6B",
   },
@@ -184,6 +184,7 @@ async function showWelcome() {
     option.selected = model.id === selectedModel.id;
     select.append(option);
   }
+  select.value = selectedModel.id;
   const modelNote = el("p", "cv-note", "Controllo la cache del modello…");
   select.addEventListener("change", async () => {
     selectedModel = MODELS.find((model) => model.id === select.value) || MODELS[0];

@@ -39,6 +39,8 @@ function setup({ failures = [], resetFailure, loadFailure } = {}) {
   const corpus = { textContent: JSON.stringify('Saverio lavora con il cloud.') };
   const workers = [];
   const engines = [];
+  const modelIds = [];
+  const deletedModels = [];
   const context = createContext({
     document: {
       querySelector: () => root,
@@ -52,7 +54,8 @@ function setup({ failures = [], resetFailure, loadFailure } = {}) {
       addEventListener() {}
       terminate() { this.terminated = true; }
     },
-    CreateWebWorkerMLCEngine: async () => {
+    CreateWebWorkerMLCEngine: async (_worker, modelId) => {
+      modelIds.push(modelId);
       if (loadFailure) throw loadFailure;
       const engine = {
         calls: [],
@@ -74,6 +77,8 @@ function setup({ failures = [], resetFailure, loadFailure } = {}) {
       engines.push(engine);
       return engine;
     },
+    hasModelInCache: async () => false,
+    deleteModelAllInfoInCache: async (modelId) => deletedModels.push(modelId),
   });
   function evaluate(code) { return runInContext(code, context); }
   runInContext(source, context);
@@ -82,8 +87,26 @@ function setup({ failures = [], resetFailure, loadFailure } = {}) {
     ask.children[0].value = question;
     await ask.children[1].listeners.click();
   }
-  return { root, workers, engines, evaluate, submit };
+  return { root, workers, engines, modelIds, deletedModels, evaluate, submit };
 }
+
+test('si può scegliere uno dei tre modelli prima di avviare e rimuovere le cache', async () => {
+  const chat = setup();
+  await chat.evaluate('showWelcome()');
+  const select = chat.root.children[4];
+  assert.equal(select.children.length, 3);
+  await chat.root.children[7].listeners.click();
+  assert.deepEqual(chat.deletedModels, [
+    'Qwen3-1.7B-q4f32_1-MLC',
+    'Qwen3-1.7B-q4f16_1-MLC',
+    'Qwen3-0.6B-q4f16_1-MLC',
+  ]);
+
+  select.value = 'Qwen3-0.6B-q4f16_1-MLC';
+  await select.listeners.change();
+  await chat.root.children[6].listeners.click();
+  assert.deepEqual(chat.modelIds, ['Qwen3-0.6B-q4f16_1-MLC']);
+});
 
 for (const message of [
   "AbortError: Failed to execute 'mapAsync' on 'GPUBuffer': Buffer was unmapped before mapping was resolved.",
