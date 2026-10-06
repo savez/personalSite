@@ -544,6 +544,39 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 .cv-chat-block .cv-start:hover,
 .cv-chat-block .cv-start:focus-visible { background: var(--accent); color: var(--bg); }
 .cv-chat-block .cv-start:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cv-chat-block .cv-start:disabled,
+.cv-chat-block .cv-clear-cache:disabled { opacity: 0.6; cursor: wait; }
+.cv-chat-block .cv-model-label {
+  display: block;
+  margin: 0 0 0.5rem;
+  font-family: var(--mono);
+  font-size: 1.25rem;
+}
+.cv-chat-block .cv-model-select {
+  width: 100%;
+  max-width: 52rem;
+  padding: 0.8rem;
+  margin-bottom: 1.2rem;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+}
+.cv-chat-block .cv-model-select:focus-visible,
+.cv-chat-block .cv-clear-cache:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cv-chat-block .cv-cache-status { font-size: 1.2rem !important; color: var(--muted); }
+.cv-chat-block .cv-clear-cache {
+  font-family: var(--mono);
+  font-size: 1.2rem;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+}
+.cv-chat-block .cv-clear-cache:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
 
 /* Stato 2 — download */
 .cv-chat-block .cv-bar {
