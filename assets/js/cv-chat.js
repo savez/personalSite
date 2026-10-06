@@ -22,14 +22,14 @@ const REFUSAL =
 
 const BLOCKED_REASONS = {
   "no-webgpu":
-    "Questa chat ha bisogno di WebGPU, che il tuo browser non espone. Funziona su Chrome, Edge e Safari recenti da computer.",
+    "Chat non disponibile: serve un browser aggiornato che supporti WebGPU. Prova Chrome, Edge o Safari su computer e verifica che l’accelerazione hardware sia attiva.",
   firefox:
-    "Su Firefox WebGPU c'è, ma l'inferenza è circa cinquanta volte più lenta che su Chrome: la chat sarebbe inutilizzabile, quindi preferisco non avviarla.",
-  ios: "Su iPhone e iPad la memoria che Safari concede a una scheda non basta a caricare il modello.",
+    "Chat non disponibile su Firefox: l’esecuzione è troppo lenta. Prova Chrome, Edge o Safari aggiornati su computer.",
+  ios: "Chat non disponibile su iPhone e iPad: la memoria concessa al browser non basta per caricare il modello. Prova da computer.",
   "no-adapter":
-    "Il browser espone WebGPU ma non riesce ad aprire una scheda grafica utilizzabile.",
+    "Chat non disponibile: il browser non riesce ad accedere a una GPU compatibile. Attiva l’accelerazione hardware, aggiorna browser e driver grafici e riprova; non funziona in alcune macchine virtuali o sessioni remote.",
   "small-gpu":
-    "La scheda grafica di questo dispositivo non ha abbastanza memoria per il modello.",
+    "Chat non disponibile: la GPU rilevata non offre risorse sufficienti per questo modello.",
 };
 
 const EXAMPLES = [
@@ -52,7 +52,12 @@ async function checkSupport() {
   if (/iPhone|iPad|iPod/.test(ua)) return { ok: false, reason: "ios" };
   if (!navigator.gpu) return { ok: false, reason: "no-webgpu" };
 
-  const adapter = await navigator.gpu.requestAdapter();
+  let adapter;
+  try {
+    adapter = await navigator.gpu.requestAdapter();
+  } catch (err) {
+    return { ok: false, reason: "no-adapter", detail: err };
+  }
   if (!adapter) return { ok: false, reason: "no-adapter" };
   if (adapter.limits.maxStorageBufferBindingSize < 1 << 30) {
     return {
