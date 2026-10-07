@@ -38,6 +38,19 @@ Nessun login e nessun backend: le card restano sul dispositivo in IndexedDB e l'
 {{< /project >}}
 
 {{< project
+    name="Bacco"
+    mark="glass"
+    kind="pwa"
+    stack="Vue 3 · Dexie · Leaflet"
+    license="MIT"
+    repo="https://github.com/savez/bacco"
+    page="https://bacco.smzstudio.it/" >}}
+Il diario dei vini e delle birre che bevi: foto dell'etichetta, voto, analisi organolettica, con cosa l'hai abbinato e dove eri. Si registra in pochi secondi con la bottiglia ancora sul tavolo, e i dettagli si aggiungono dopo se vuoi.
+
+Lettura del barcode con i dati di Open Food Facts, ricerca e filtri per tipo e periodo, mappa dei posti su OpenStreetMap, card da condividere sui social e backup in JSON o CSV. Nessun server e nessun tracciamento: tutto resta nel browser in IndexedDB e l'app si installa sul telefono, anche offline.
+{{< /project >}}
+
+{{< project
     name="Officino"
     mark="sheet"
     kind="webapp"
