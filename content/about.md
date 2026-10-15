@@ -10,22 +10,22 @@ layout = "about"
 
 # <span class="emoji">👋</span> Ciao, sono Saverio Menin
 
-<p class="lead"><span class="emoji">💻</span> <strong>Chief Software Architect &amp; Full-stack Developer</strong>, Santagostino.<br><br>Progetto e realizzo software end-to-end: dall'architettura al deployment.</p>
+<p class="lead"><span class="emoji">💻</span> <strong>Chief Technology Officer · Software Architect · Cloud Native Enthusiast · AI lover</strong><br><br>Dalla visione al deployment: tecnologia, architettura e persone.</p>
 
 {{< entry label="about-me" >}}
-Partito da **PHP**, oggi copro tutto lo stack: front-end, back-end, DevOps e cloud.
+Partito da **PHP**, ho attraversato tutto lo stack: front-end, back-end, DevOps e cloud.
 
-Mi concentro su architettura e integrazioni, con metodo SCRUM.
+Oggi guido le scelte tecnologiche e i team che le realizzano, senza perdere il contatto con il codice.
 
-Performance, sicurezza, manutenibilità: i tre KPI che guidano ogni progetto.
+Performance, sicurezza, manutenibilità: i tre KPI che guidano ogni decisione.
 {{< /entry >}}
 
 {{< entry label="focus" >}}
-Cloud-native e serverless, per scalare senza sprechi.
+Piattaforme cloud-native e serverless che crescono con l'azienda, non contro.
 
-AI applicata al lavoro quotidiano: workflow, sviluppo, vita di tutti i giorni.
+AI applicata dove crea valore: nei prodotti, nei processi, nel lavoro dei team.
 
-IoT e domotica, dove la teoria diventa pratica.
+Developer Experience come leva: team che lavorano bene consegnano meglio.
 {{< /entry >}}
 
 <div class="entry">
