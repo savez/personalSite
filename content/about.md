@@ -13,9 +13,9 @@ layout = "about"
 <p class="lead"><span class="emoji">💻</span> <strong>Chief Technology Officer · Software Architect · Cloud Native Enthusiast · AI lover</strong><br><br>Dalla visione al deployment: tecnologia, architettura e persone.</p>
 
 {{< entry label="about-me" >}}
-Partito da **PHP**, ho attraversato tutto lo stack: front-end, back-end, DevOps e cloud.
+Da CTO la mia missione è dare direzione alla tecnologia: architetture solide, processi DevOps efficienti e la **Developer Experience** al centro di ogni scelta.
 
-Oggi guido le scelte tecnologiche e i team che le realizzano, senza perdere il contatto con il codice.
+Costruire software è la mia passione da sempre: ho sviluppato soluzioni mission-critical nella sanità e guidato team di sviluppo e data science in Deloitte.
 
 Performance, sicurezza, manutenibilità: i tre KPI che guidano ogni decisione.
 {{< /entry >}}
@@ -23,9 +23,15 @@ Performance, sicurezza, manutenibilità: i tre KPI che guidano ogni decisione.
 {{< entry label="focus" >}}
 Piattaforme cloud-native e serverless che crescono con l'azienda, non contro.
 
-AI applicata dove crea valore: nei prodotti, nei processi, nel lavoro dei team.
+AI ogni giorno: sistemi multi-agente e automazione dei flussi di lavoro, dal cloud fino all'IoT e alla smart home.
 
-Developer Experience come leva: team che lavorano bene consegnano meglio.
+Team che lavorano bene consegnano meglio: la tecnologia serve le persone, non il contrario.
+{{< /entry >}}
+
+{{< entry label="community" >}}
+La curiosità è il mio motore: studio e condivido quello che imparo.
+
+Speaker in podcast tecnologici, attivo nelle community, finalista all'Osservatorio Cloud del Politecnico di Milano.
 {{< /entry >}}
 
 <div class="entry">
