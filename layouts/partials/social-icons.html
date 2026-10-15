@@ -1,10 +1,14 @@
 {{ with .Site.Params.social }}
 <ul class="social-icons">
   {{ range sort . "weight" }}
-    {{ if .icon }}
+    {{ if or .icon .svg }}
       <li>
         <a href="{{ .url | safeURL }}" aria-label="{{ .name }}" rel="me noopener" target="_blank">
-          <i class="{{ .icon }}" aria-hidden="true"></i>
+          {{ with .svg }}
+            {{ (resources.Get .).Content | safeHTML }}
+          {{ else }}
+            <i class="{{ .icon }}" aria-hidden="true"></i>
+          {{ end }}
         </a>
       </li>
     {{ end }}

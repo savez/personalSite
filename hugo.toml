@@ -176,6 +176,12 @@ icon = "fa-brands fa-slideshare fa-2x"
 weight = 5
 url = "https://slides.com/saveriom"
 
+[[params.social]]
+name = "Substack"
+svg = "icons/substack.svg"
+weight = 6
+url = "https://substack.com/@smzstudio"
+
 [languages.en]
 languageName = ":uk:"
 
