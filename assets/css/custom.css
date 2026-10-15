@@ -225,6 +225,7 @@ body.colorscheme-dark .social-icons a:focus,
 body.colorscheme-auto .social-icons a:hover,
 body.colorscheme-auto .social-icons a:focus { color: var(--ink); text-decoration: none; }
 .social-icons i { font-size: 1.9rem; }
+.social-icons .social-svg { width: 1.7rem; height: 1.7rem; }
 
 /* ---------- Page (About / Talks) ---------- */
 .page-eyebrow {
