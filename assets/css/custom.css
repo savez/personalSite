@@ -163,18 +163,27 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
 }
 /* The personal statement is the hero headline */
 .home-landing .statement {
-  font-size: 2.8rem;
-  line-height: 1.25;
+  font-size: 4rem;
+  line-height: 1.15;
   font-weight: 600;
   letter-spacing: -0.015em;
   color: var(--ink);
-  margin: 0 0 1.8rem;
+  margin: 0 0 1.4rem;
   max-width: 46rem;
   text-align: left;
 }
 .home-landing .statement .hl { color: var(--accent); }
+.home-landing .statement .line { display: block; }
+.home-landing .statement-sub {
+  font-size: 1.8rem;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0 0 1.8rem;
+  max-width: 46rem;
+}
 @media only screen and (max-width: 768px) {
-  .home-landing .statement { font-size: 2.4rem; }
+  .home-landing .statement { font-size: 3rem; }
+  .home-landing .statement-sub { font-size: 1.6rem; }
 }
 /* Roles as a quiet mono footnote row */
 .home-landing .role-line {

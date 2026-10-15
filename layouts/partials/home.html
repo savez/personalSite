@@ -3,7 +3,8 @@
     {{ partial "home/avatar.html" . }}
     <p class="who">$ whoami</p>
   </div>
-  <h1 class="statement"><span class="hl">Progetto</span>, <span class="hl">sviluppo</span> e <span class="hl">rilascio</span> soluzioni software complete. Unisco la pratica sul campo al continuo studio di nuovi strumenti e tendenze tecnologiche.</h1>
+  <h1 class="statement"><span class="line"><span class="hl">Guido</span> la tecnologia.</span> <span class="line"><span class="hl">Progetto</span> architetture.</span> <span class="line">Le <span class="hl">porto</span> in produzione.</span></h1>
+  <p class="statement-sub">Visione strategica e pratica sul campo, con cloud e AI come leve per far crescere prodotti e team.</p>
   {{ with .Site.Params.info }}
     {{ if reflect.IsSlice . }}
       <p class="role-line">
