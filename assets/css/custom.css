@@ -208,6 +208,33 @@ body.colorscheme-auto .content :is(h1, h2, h3, h4, h5, h6) {
   padding-bottom: 0.2rem;
 }
 .home-landing .quick-links a:hover { text-decoration: none; color: var(--accent); }
+/* Quiet newsletter CTA: one elevated box, accent only on the edge and the links */
+.home-landing .newsletter-cta {
+  max-width: 46rem;
+  margin: 0 0 2.2rem;
+  padding: 1.2rem 1.6rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.home-landing .newsletter-cta p { margin: 0 0 0.6rem; }
+.home-landing .newsletter-cta .cta-label {
+  font-family: var(--mono);
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+body.colorscheme-light .home-landing .newsletter-cta a,
+body.colorscheme-dark .home-landing .newsletter-cta a,
+body.colorscheme-auto .home-landing .newsletter-cta a { color: var(--accent); }
+.home-landing .newsletter-cta .cta-action {
+  font-family: var(--mono);
+  font-size: 1.3rem;
+}
 
 /* ---------- Social icons (monochrome) ---------- */
 .social-icons {
