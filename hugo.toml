@@ -180,7 +180,7 @@ url = "https://slides.com/saveriom"
 name = "Substack"
 svg = "icons/substack.svg"
 weight = 6
-url = "https://smzstudio.substack.com"
+url = "https://substack.com/@smzstudio"
 
 [languages.en]
 languageName = ":uk:"
