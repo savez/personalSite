@@ -1,0 +1,16 @@
+{
+  "name": "legacy-app",
+  "version": "1.0.0",
+  "lockfileVersion": 1,
+  "requires": true,
+  "dependencies": {
+    "lodash": { "version": "4.17.20", "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.20.tgz" },
+    "express": {
+      "version": "4.17.1",
+      "requires": { "qs": "6.7.0" },
+      "dependencies": { "qs": { "version": "6.7.0" } }
+    },
+    "local-thing": { "version": "file:../local-thing" },
+    "mocha": { "version": "10.0.0", "dev": true }
+  }
+}
