@@ -5,7 +5,10 @@ on:
   push:
     branches: ["main"]
   schedule:
+    # Every 6 hours: the alert banner shows the last 72h of CERT bulletins.
+    # 06:00 is its own entry so the inactivity reminder can key on it (once a day).
     - cron: "0 6 * * *"
+    - cron: "0 0,12,18 * * *"
   workflow_dispatch:
 
 permissions:
@@ -38,17 +41,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Fetch GitHub security advisories
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Fetch security advisories and CERT alerts
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p data/advisories
-          for eco in npm composer actions; do
-            gh api -H "Accept: application/vnd.github+json" \
-              "/advisories?type=reviewed&ecosystem=$eco&per_page=50&sort=published&direction=desc" \
-              > "data/advisories/$eco.json" || echo "[]" > "data/advisories/$eco.json"
-            test -s "data/advisories/$eco.json" || echo "[]" > "data/advisories/$eco.json"
-          done
+        run: node scripts/fetch-advisories.mjs
       - name: Check repo inactivity
         id: inactivity
         run: |
@@ -58,7 +58,7 @@ jobs:
           echo "days=$DAYS" >> "$GITHUB_OUTPUT"
           echo "Days since last commit: $DAYS"
       - name: Send inactivity reminder
-        if: ${{ github.event_name == 'schedule' && steps.inactivity.outputs.days > 30 && steps.inactivity.outputs.days < 33 && env.MAIL_SERVER != '' }}
+        if: ${{ github.event_name == 'schedule' && github.event.schedule == '0 6 * * *' && steps.inactivity.outputs.days > 30 && steps.inactivity.outputs.days < 33 && env.MAIL_SERVER != '' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: ${{ secrets.MAIL_SERVER }}

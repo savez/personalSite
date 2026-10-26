@@ -14,6 +14,8 @@
   --line: rgba(32, 34, 31, 0.12);
   --sev-critical: #B85C3E;
   --sev-high: #B07D2E;
+  --sev-medium: #8A8236;
+  --sev-low: #5E7A86;
   --mono: 'JetBrains Mono', SFMono-Regular, Consolas, Menlo, monospace;
   --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -27,6 +29,8 @@ body.colorscheme-dark {
   --line: rgba(237, 234, 226, 0.12);
   --sev-critical: #D08770;
   --sev-high: #D9A86C;
+  --sev-medium: #C4BD78;
+  --sev-low: #8FABB6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,6 +43,8 @@ body.colorscheme-dark {
     --line: rgba(237, 234, 226, 0.12);
     --sev-critical: #D08770;
     --sev-high: #D9A86C;
+    --sev-medium: #C4BD78;
+    --sev-low: #8FABB6;
   }
 }
 
@@ -371,6 +377,96 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 
 /* ---------- Advisories ---------- */
 .adv-page .adv-updated { font-size: 1.2rem; color: var(--muted); margin: 0 0 2rem; text-align: left; }
+.adv-page .adv-updated a { color: var(--muted); border-bottom: 1px solid var(--line); }
+
+/* Alert crawl — the TG "breaking news" strip. The label is the only solid block
+   of colour on the page; everything else stays in the quiet token palette. */
+.adv-alerts { margin: 0 0 2.8rem; }
+.adv-ticker {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+  min-height: 3.6rem;
+}
+.adv-ticker-label {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0 1.3rem;
+  background: var(--sev-critical);
+  color: var(--bg);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.adv-ticker-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--bg);
+  animation: term-blink 1.1s steps(1) infinite;
+}
+.adv-ticker-viewport {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 2.4rem, #000 calc(100% - 2.4rem), transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 2.4rem, #000 calc(100% - 2.4rem), transparent);
+}
+.adv-ticker-viewport:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.adv-ticker-track {
+  display: flex;
+  flex-wrap: nowrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  font-size: 1.25rem;
+  animation: adv-crawl var(--crawl-dur, 30s) linear infinite;
+}
+.adv-ticker:hover .adv-ticker-track,
+.adv-ticker-viewport:focus-within .adv-ticker-track { animation-play-state: paused; }
+.adv-ticker-item { display: inline-flex; align-items: baseline; gap: 0.8rem; padding: 0 1.6rem; }
+.adv-ticker-item::after { content: "▸"; color: var(--accent); margin-left: 1.6rem; }
+.adv-ticker-cat { color: var(--sev-critical); text-transform: lowercase; }
+.adv-ticker-src { color: var(--muted); }
+@keyframes adv-crawl { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.adv-alerts-all { margin-top: 0.8rem; }
+.adv-alerts-all summary {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--muted);
+  text-align: right;
+  list-style: none;
+}
+.adv-alerts-all summary::-webkit-details-marker { display: none; }
+.adv-alerts-all summary::before { content: "▸ "; color: var(--accent); }
+.adv-alerts-all[open] summary::before { content: "▾ "; }
+.adv-alerts-all summary:hover { color: var(--ink); }
+.adv-alerts-all summary .n { color: var(--accent); }
+.adv-alerts-list { list-style: none; margin: 1rem 0 0; padding: 0; border-top: 1px solid var(--line); }
+.adv-alerts-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 1.3rem;
+  text-align: left;
+}
+.adv-alerts-when, .adv-alerts-src { font-size: 1.1rem; color: var(--muted); }
+.adv-alerts-list .adv-eco { margin-left: 0; }
+.adv-alerts-list a { flex: 1 1 24rem; }
+.adv-page .adv-alerts-none { font-size: 1.2rem; color: var(--muted); margin: 0; text-align: left; }
 
 .adv-search {
   display: flex;
@@ -393,12 +489,13 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   font-size: 1.3rem;
 }
 .adv-search input::placeholder { color: var(--muted); }
+.adv-search:focus-within { border-color: var(--accent); }
 
 .adv-tabs {
   display: flex;
   gap: 2rem;
   border-bottom: 1px solid var(--line);
-  margin: 0 0 0.6rem;
+  margin: 0 0 1.2rem;
   overflow-x: auto;
 }
 .adv-tab {
@@ -417,6 +514,44 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 .adv-tab.active { color: var(--ink); border-bottom-color: var(--accent); }
 .adv-tab.active .n { color: var(--accent); }
 
+/* Severity filter: same lowercase mono voice as the tabs, the dot carries the colour.
+   Off chips fade and lose their dot fill, so "what's excluded" reads at a glance. */
+.adv-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin: 0 0 0.6rem;
+}
+.adv-sevs { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.4rem; font-size: 1.2rem; }
+.adv-sevs-label { color: var(--muted); }
+.adv-sev-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: none;
+  padding: 0.2rem 0;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 1.2rem;
+  color: var(--ink);
+}
+.adv-sev-chip .adv-dot { box-shadow: inset 0 0 0 1px currentColor; }
+.adv-sev-chip[aria-pressed="false"] { color: var(--muted); opacity: 0.6; text-decoration: line-through; }
+.adv-sev-chip.sev-critical .adv-dot { background: var(--sev-critical); color: var(--sev-critical); }
+.adv-sev-chip.sev-high .adv-dot { background: var(--sev-high); color: var(--sev-high); }
+.adv-sev-chip.sev-medium .adv-dot { background: var(--sev-medium); color: var(--sev-medium); }
+.adv-sev-chip.sev-low .adv-dot { background: var(--sev-low); color: var(--sev-low); }
+.adv-sev-chip.sev-unknown .adv-dot { color: var(--muted); }
+/* After the colour rules: same specificity, so order makes "off" win. */
+.adv-sev-chip[aria-pressed="false"] .adv-dot { background: transparent; }
+.adv-tab:focus-visible,
+.adv-sev-chip:focus-visible,
+.adv-alerts-all summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.adv-request { font-size: 1.2rem; }
+
 .adv-row {
   display: flex;
   gap: 1.6rem;
@@ -428,7 +563,8 @@ body.colorscheme-auto .footer a { color: var(--ink); }
    stay visible — re-assert it at higher specificity for every element the JS hides. */
 .adv-row[hidden],
 .adv-empty[hidden],
-.adv-noresult[hidden] { display: none; }
+.adv-noresult[hidden],
+.adv-q-wrap[hidden] { display: none; }
 .adv-sev { flex: 0 0 8.5rem; }
 .adv-badge {
   font-size: 1rem;
@@ -439,22 +575,31 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   align-items: center;
   gap: 0.6rem;
 }
-.adv-dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--muted); display: inline-block; }
+.adv-dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--muted); display: inline-block; flex: 0 0 auto; }
 .adv-sev.sev-critical .adv-badge { color: var(--sev-critical); }
 .adv-sev.sev-critical .adv-dot { background: var(--sev-critical); }
 .adv-sev.sev-high .adv-badge { color: var(--sev-high); }
 .adv-sev.sev-high .adv-dot { background: var(--sev-high); }
-.adv-date { display: block; font-size: 1.1rem; color: var(--muted); margin-top: 0.6rem; }
+.adv-sev.sev-medium .adv-badge { color: var(--sev-medium); }
+.adv-sev.sev-medium .adv-dot { background: var(--sev-medium); }
+.adv-sev.sev-low .adv-badge { color: var(--sev-low); }
+.adv-sev.sev-low .adv-dot { background: var(--sev-low); }
+/* CVSS: shown, never filtered. Big enough to scan down the column. */
+.adv-cvss { display: block; font-size: 1.8rem; line-height: 1.2; color: var(--ink); margin-top: 0.4rem; }
+.adv-date { display: block; font-size: 1.1rem; color: var(--muted); margin-top: 0.4rem; }
 
 .adv-body { flex: 1 1 auto; min-width: 0; }
-.adv-pkg { font-size: 1.3rem; color: var(--ink); }
+.adv-pkg { font-size: 1.3rem; color: var(--ink); margin-right: 0.8rem; overflow-wrap: anywhere; }
 .adv-eco {
+  display: inline-block;
   font-size: 1rem;
   color: var(--accent);
   border: 1px solid var(--line);
   border-radius: 3px;
   padding: 0.1rem 0.6rem;
-  margin-left: 0.8rem;
+  margin: 0 0.6rem 0 0;
+  line-height: 1.5;
+  vertical-align: 0.1rem;
 }
 .adv-row .adv-summary {
   font-size: 1.35rem;
@@ -462,18 +607,58 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   color: var(--ink);
   margin: 0.6rem 0;
   text-align: left;
+  overflow-wrap: anywhere;
 }
-.adv-meta { display: flex; gap: 1.4rem; flex-wrap: wrap; font-size: 1.1rem; color: var(--muted); }
+.adv-meta { display: flex; gap: 0.4rem 1.4rem; flex-wrap: wrap; font-size: 1.1rem; color: var(--muted); }
 .adv-meta a { color: var(--accent); }
-.adv-meta .adv-fix { color: var(--muted); }
+.adv-meta .adv-fix { color: var(--muted); overflow-wrap: anywhere; }
+.adv-meta .adv-src a { color: var(--muted); border-bottom: 1px solid var(--line); }
+.adv-meta .adv-src a:hover { color: var(--accent); }
 
 .adv-page .adv-empty,
 .adv-page .adv-noresult { font-size: 1.3rem; color: var(--muted); padding: 1.6rem 0; text-align: left; }
 
+.adv-sources {
+  margin-top: 4rem;
+  padding-top: 2.4rem;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+.adv-page .adv-sources h2 { font-size: 1.3rem; color: var(--accent); margin: 0 0 1.2rem; text-align: left; letter-spacing: 0.04em; }
+.adv-sources-list { list-style: none; margin: 0; padding: 0; }
+.adv-sources-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 1.2rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 1.25rem;
+}
+.adv-sources-list a { flex: 0 0 auto; }
+.adv-sources-what { color: var(--muted); flex: 1 1 20rem; }
+.adv-sources-st { font-family: var(--mono); font-size: 1.1rem; color: var(--muted); }
+.adv-sources-st.ok { color: var(--accent); }
+.adv-sources-st.ko { color: var(--sev-critical); }
+.adv-page .adv-sources-note { font-size: 1.15rem; color: var(--muted); margin: 1.2rem 0 0; text-align: left; }
+
 @media only screen and (max-width: 600px) {
   .adv-row { flex-direction: column; gap: 0.6rem; }
-  .adv-sev { flex-basis: auto; display: flex; gap: 1.2rem; align-items: center; }
-  .adv-date { margin-top: 0; }
+  .adv-sev { flex-basis: auto; display: flex; gap: 1.2rem; align-items: baseline; }
+  .adv-cvss { font-size: 1.4rem; }
+  .adv-cvss, .adv-date { margin-top: 0; }
+  .adv-ticker-label { padding: 0 0.9rem; letter-spacing: 0.06em; }
+  .adv-toolbar { flex-direction: column; align-items: flex-start; }
+}
+
+/* No crawl for reduced motion: the strip becomes a static, wrapping list. */
+@media (prefers-reduced-motion: reduce) {
+  .adv-ticker-dot { animation: none; }
+  .adv-ticker-viewport { -webkit-mask-image: none; mask-image: none; }
+  .adv-ticker-track { animation: none; flex-direction: column; white-space: normal; padding: 0.8rem 0; }
+  .adv-ticker-item { padding: 0.3rem 1.4rem; flex-wrap: wrap; }
+  .adv-ticker-item::after { content: none; }
+  .adv-ticker-item[aria-hidden="true"] { display: none; }
 }
 
 /* ---------- Projects ---------- */

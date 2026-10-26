@@ -1,30 +1,85 @@
 {{ define "title" }}{{ .Title }} · {{ .Site.Title }}{{ end }}
 {{ define "content" }}
+{{/*
+  Data comes from scripts/fetch-advisories.mjs, run by the Pages workflow before `hugo`:
+  site.Data.vulns (vulnerabilities by category) and site.Data.alerts (CERT bulletins).
+  Both files are gitignored; locally run the script once or the page renders empty.
+*/}}
+{{ $vulns := site.Data.vulns | default dict }}
+{{ $alerts := site.Data.alerts | default dict }}
+{{ $items := $vulns.items | default slice }}
+{{ $alertItems := $alerts.items | default slice }}
+
+{{ $cats := slice
+  (dict "key" "npm" "label" "pacchetti js")
+  (dict "key" "composer" "label" "composer")
+  (dict "key" "actions" "label" "github actions")
+  (dict "key" "nodejs" "label" "nodejs")
+  (dict "key" "php" "label" "php")
+  (dict "key" "laravel" "label" "laravel")
+}}
+{{ $catLabels := dict }}
+{{ range $cats }}{{ $catLabels = merge $catLabels (dict .key .label) }}{{ end }}
+
+{{ $sevs := slice "critical" "high" "medium" "low" "unknown" }}
+{{ $sevLabels := dict "critical" "Critical" "high" "High" "medium" "Medium" "low" "Low" "unknown" "Unknown" }}
+
+{{ $sourceInfo := dict
+  "github-reviewed" (dict "label" "GitHub Advisory DB" "url" "https://github.com/advisories")
+  "github-unreviewed" (dict "label" "GitHub Advisory DB · unreviewed" "url" "https://github.com/advisories?query=type%3Aunreviewed")
+  "php-src" (dict "label" "php-src security advisories" "url" "https://github.com/php/php-src/security/advisories")
+  "nodejs-wg" (dict "label" "Node.js security-wg" "url" "https://github.com/nodejs/security-wg/tree/main/vuln/core")
+}}
+
+{{ $relevant := slice }}
+{{ range $alertItems }}{{ if .categories }}{{ $relevant = $relevant | append . }}{{ end }}{{ end }}
+
 <section class="container page adv-page">
   <article>
     <p class="page-eyebrow">$ gh advisory list --reviewed</p>
     <h1>Security advisories</h1>
-    <p class="adv-updated mono">// github advisory database · npm · composer · actions — aggiornato {{ now.UTC.Format "2006-01-02 15:04" }} UTC</p>
+    <p class="adv-updated mono">// aggiornato {{ with $vulns.generated }}{{ dateFormat "2006-01-02 15:04" . }}{{ else }}{{ now.UTC.Format "2006-01-02 15:04" }}{{ end }} UTC · <a href="#adv-sources">fonti</a></p>
 
-    {{ $ecos := slice "npm" "composer" "actions" }}
-    {{ $raw := site.Data.advisories | default dict }}
-    {{ $data := dict }}
-    {{ range $eco := $ecos }}
-      {{ $items := slice }}
-      {{ if isset $raw $eco }}{{ $items = index $raw $eco }}{{ end }}
-      {{ $data = merge $data (dict $eco $items) }}
-    {{ end }}
-    {{ $sevLabels := dict "critical" "Critical" "high" "High" "medium" "Moderate" "low" "Low" "unknown" "Unknown" }}
-
-    {{/* Merge every ecosystem into one list tagged with its eco, then sort by date desc */}}
-    {{ $all := slice }}
-    {{ range $eco := $ecos }}
-      {{ range (index $data $eco) }}
-        {{ $all = $all | append (dict "eco" $eco "adv" . "published" .published_at) }}
+    {{/* ---------- Alert crawl ---------- */}}
+    <section class="adv-alerts" aria-labelledby="adv-alerts-title">
+      <h2 id="adv-alerts-title" class="sr-only">Alert CERT delle ultime {{ $alerts.window_hours | default 72 }} ore</h2>
+      {{ if $relevant }}
+        <div class="adv-ticker" role="region" aria-label="Alert rilevanti">
+          <span class="adv-ticker-label mono"><span class="adv-ticker-dot" aria-hidden="true"></span>alert</span>
+          <div class="adv-ticker-viewport" tabindex="0">
+            <ul class="adv-ticker-track mono" style="--crawl-dur: {{ mul 12 (len $relevant) | add 18 }}s">
+              {{ range $relevant }}
+                <li class="adv-ticker-item">
+                  {{ range .categories }}<span class="adv-ticker-cat">{{ index $catLabels . | default . }}</span>{{ end }}
+                  <span class="adv-ticker-src">{{ .source }} · {{ dateFormat "02/01" .published }}</span>
+                  <a href="{{ .url }}" target="_blank" rel="noopener">{{ .title }}</a>
+                </li>
+              {{ end }}
+            </ul>
+          </div>
+        </div>
       {{ end }}
-    {{ end }}
-    {{ $all = sort $all "published" "desc" }}
 
+      {{ if $alertItems }}
+        <details class="adv-alerts-all">
+          <summary class="mono">tutti gli alert · ultime {{ $alerts.window_hours | default 72 }}h <span class="n">{{ len $alertItems }}</span></summary>
+          <ul class="adv-alerts-list">
+            {{ range $alertItems }}
+              <li>
+                <span class="adv-alerts-when mono">{{ dateFormat "02/01 15:04" .published }}</span>
+                <span class="adv-alerts-src mono">{{ .source }}</span>
+                {{ range .categories }}<span class="adv-eco mono">{{ index $catLabels . | default . }}</span>{{ end }}
+                <a href="{{ .url }}" target="_blank" rel="noopener">{{ .title }}</a>
+              </li>
+            {{ end }}
+          </ul>
+        </details>
+      {{ else }}
+        <p class="adv-alerts-none mono">// nessun alert CERT-EU o CSIRT Italia nelle ultime {{ $alerts.window_hours | default 72 }} ore</p>
+      {{ end }}
+    </section>
+
+    {{/* ---------- Filters ---------- */}}
     <div class="adv-search">
       <span class="adv-search-glyph mono" aria-hidden="true">/</span>
       <label class="sr-only" for="adv-q">Cerca advisory</label>
@@ -32,48 +87,90 @@
              placeholder="cerca per pacchetto, CVE/GHSA, o testo…">
     </div>
 
-    <div class="adv-tabs mono" aria-label="Filtra per ecosistema">
-      <button class="adv-tab active" aria-pressed="true" data-tab="all">all <span class="n">{{ len $all }}</span></button>
-      {{ range $eco := $ecos }}
-        <button class="adv-tab" aria-pressed="false" data-tab="{{ $eco }}">{{ $eco }} <span class="n">{{ len (index $data $eco) }}</span></button>
+    <div class="adv-tabs mono" role="group" aria-label="Filtra per categoria">
+      <button class="adv-tab active" aria-pressed="true" data-tab="all">all <span class="n">{{ len $items }}</span></button>
+      {{ range $cats }}
+        {{ $key := .key }}
+        {{ $n := 0 }}
+        {{ range $items }}{{ if in .categories $key }}{{ $n = add $n 1 }}{{ end }}{{ end }}
+        <button class="adv-tab" aria-pressed="false" data-tab="{{ $key }}">{{ .label }} <span class="n">{{ $n }}</span></button>
       {{ end }}
     </div>
 
+    <div class="adv-toolbar">
+      <div class="adv-sevs mono" role="group" aria-label="Filtra per gravità">
+        <span class="adv-sevs-label">gravità</span>
+        {{ range $sevs }}
+          <button class="adv-sev-chip sev-{{ . }}" aria-pressed="true" data-sev="{{ . }}"><span class="adv-dot" aria-hidden="true"></span>{{ lower (index $sevLabels .) }}</button>
+        {{ end }}
+      </div>
+      <a class="adv-request mono" href="https://github.com/savez/personalSite/issues/new?template=advisory-category.yml" target="_blank" rel="noopener">+ chiedi una categoria</a>
+    </div>
+
+    {{/* ---------- List ---------- */}}
     <div class="adv-list">
-      {{ range $all }}
-        {{ $adv := .adv }}
-        {{ $eco := .eco }}
-        {{ $v := dict }}
-        {{ with $adv.vulnerabilities }}{{ $v = index . 0 }}{{ end }}
-        {{ $pkg := "" }}{{ with $v.package }}{{ $pkg = .name }}{{ end }}
-        {{ $sev := lower (default "unknown" $adv.severity) }}
-        {{ $sevLabel := index $sevLabels $sev | default "Unknown" }}
-        {{ $search := lower (printf "%s %s %s %s %s" $pkg $adv.summary (default "" $adv.ghsa_id) (default "" $adv.cve_id) $eco) }}
-        <article class="adv-row" data-eco="{{ $eco }}" data-search="{{ $search }}">
+      {{ range $items }}
+        {{ $sev := .severity | default "unknown" }}
+        {{ $src := index $sourceInfo .source | default (dict "label" .source "url" "") }}
+        {{ $catNames := slice }}
+        {{ range .categories }}{{ $catNames = $catNames | append (index $catLabels . | default .) }}{{ end }}
+        {{ $search := lower (printf "%s %s %s %s %s %s" .pkg .title .ghsa .cve (delimit $catNames " ") $src.label) }}
+        <article class="adv-row" data-cats="{{ delimit .categories " " }}" data-sev="{{ $sev }}" data-search="{{ $search }}">
           <div class="adv-sev sev-{{ $sev }}">
-            <span class="adv-badge mono"><span class="adv-dot" aria-hidden="true"></span> {{ $sevLabel }}</span>
-            <span class="adv-date mono">{{ dateFormat "2006-01-02" $adv.published_at }}</span>
+            <span class="adv-badge mono"><span class="adv-dot" aria-hidden="true"></span> {{ index $sevLabels $sev }}</span>
+            <span class="adv-cvss mono" title="CVSS">{{ with .cvss }}{{ printf "%.1f" . }}{{ else }}—{{ end }}</span>
+            <span class="adv-date mono">{{ if .approx_date }}{{ dateFormat "2006-01" .published }}{{ else }}{{ dateFormat "2006-01-02" .published }}{{ end }}</span>
           </div>
           <div class="adv-body">
-            <span class="adv-pkg mono">{{ $pkg | default "—" }}</span><span class="adv-eco mono">{{ $eco }}</span>
-            <p class="adv-summary">{{ $adv.summary }}</p>
+            <span class="adv-pkg mono">{{ .pkg | default "—" }}</span>{{ range $catNames }}<span class="adv-eco mono">{{ . }}</span>{{ end }}
+            <p class="adv-summary">{{ .title }}</p>
             <div class="adv-meta mono">
-              <a href="{{ $adv.html_url }}" target="_blank" rel="noopener">{{ $adv.ghsa_id }}</a>
-              {{ with $adv.cve_id }}<a href="https://nvd.nist.gov/vuln/detail/{{ . }}" target="_blank" rel="noopener">{{ . }}</a>{{ end }}
-              {{ with $v.first_patched_version }}<span class="adv-fix">patch: &ge; {{ . }}</span>{{ end }}
+              {{ if .ghsa }}<a href="{{ .url }}" target="_blank" rel="noopener">{{ .ghsa }}</a>{{ else if not .cve }}<a href="{{ .url }}" target="_blank" rel="noopener">dettagli</a>{{ end }}
+              {{ with .cve }}<a href="https://nvd.nist.gov/vuln/detail/{{ . }}" target="_blank" rel="noopener">{{ . }}</a>{{ end }}
+              {{ if and (not .ghsa) .cve }}<a href="{{ .url }}" target="_blank" rel="noopener">release note</a>{{ end }}
+              {{ with .patched }}<span class="adv-fix">patch: {{ . }}</span>{{ end }}
+              <span class="adv-src">fonte: {{ with $src.url }}<a href="{{ . }}" target="_blank" rel="noopener">{{ $src.label }}</a>{{ else }}{{ $src.label }}{{ end }}</span>
             </div>
           </div>
         </article>
       {{ end }}
 
-      {{ range $eco := $ecos }}
-        {{ if not (index $data $eco) }}
-          <p class="adv-empty" data-eco="{{ $eco }}">Nessuna advisory disponibile per {{ $eco }} (aggiornamento non riuscito).</p>
-        {{ end }}
+      {{ if not $items }}
+        <p class="adv-empty">Nessuna advisory disponibile: l'aggiornamento delle fonti non è riuscito.</p>
       {{ end }}
     </div>
 
-    <p class="adv-noresult" hidden>Nessun risultato per «<span class="adv-q-echo"></span>».</p>
+    <p class="adv-noresult" hidden>Nessun risultato con questi filtri<span class="adv-q-wrap"> per «<span class="adv-q-echo"></span>»</span>.</p>
+
+    {{/* ---------- Sources ---------- */}}
+    <footer id="adv-sources" class="adv-sources">
+      <h2 class="mono">// fonti</h2>
+      {{ $status := merge ($vulns.sources | default dict) ($alerts.sources | default dict) }}
+      {{ $rows := slice
+        (dict "key" "rss:cert-eu" "name" "CERT-EU" "url" "https://cert.europa.eu/publications/security-advisories/" "what" (printf "alert · bollettini delle ultime %v ore" ($alerts.window_hours | default 72)))
+        (dict "key" "rss:acn" "name" "CSIRT Italia (ACN)" "url" "https://www.acn.gov.it/portale/csirt-italia" "what" (printf "alert · bollettini delle ultime %v ore" ($alerts.window_hours | default 72)))
+        (dict "key" "github-reviewed:npm" "name" "GitHub Advisory DB · npm" "url" "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm" "what" "pacchetti js · ultime 100 revisionate")
+        (dict "key" "github-reviewed:composer" "name" "GitHub Advisory DB · composer" "url" "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Acomposer" "what" "composer · ultime 100 revisionate")
+        (dict "key" "github-reviewed:laravel" "name" "GitHub Advisory DB · laravel" "url" "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Acomposer+laravel" "what" "laravel · pacchetti laravel/*, illuminate/*, livewire")
+        (dict "key" "github-reviewed:actions" "name" "GitHub Advisory DB · actions" "url" "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Aactions" "what" "github actions · ultime 100 revisionate")
+        (dict "key" "php-src" "name" "php-src security advisories" "url" "https://github.com/php/php-src/security/advisories" "what" "php · runtime")
+        (dict "key" "nodejs-wg" "name" "Node.js security-wg" "url" "https://github.com/nodejs/security-wg/tree/main/vuln/core" "what" "nodejs · runtime, ultime 100")
+        (dict "key" "github-unreviewed" "name" "GitHub Advisory DB · unreviewed" "url" "https://github.com/advisories?query=type%3Aunreviewed" "what" (printf "php, nodejs, laravel · non revisionate degli ultimi %v giorni" ($vulns.window_days | default 7)))
+      }}
+      <ul class="adv-sources-list">
+        {{ range $rows }}
+          {{ $st := index $status .key }}
+          <li>
+            <a href="{{ .url }}" target="_blank" rel="noopener">{{ .name }}</a>
+            <span class="adv-sources-what">{{ .what }}</span>
+            {{ if not $st }}<span class="adv-sources-st">—</span>
+            {{ else if $st.ok }}<span class="adv-sources-st ok">{{ $st.count }} {{ cond (eq $st.count 1) "voce" "voci" }}</span>
+            {{ else }}<span class="adv-sources-st ko">non raggiunta in questo aggiornamento</span>{{ end }}
+          </li>
+        {{ end }}
+      </ul>
+      <p class="adv-sources-note">Le voci presenti in più fonti sono unite per CVE. Le date delle advisory Node.js senza data esatta indicano il mese della security release.</p>
+    </footer>
   </article>
 </section>
 {{ $js := resources.Get "js/advisories.js" }}
