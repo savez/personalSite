@@ -1,0 +1,4 @@
+{ "name": "fixture-app", "version": "1.0.0", "private": true,
+  "engines": { "node": ">=20" },
+  "dependencies": { "undici": "6.19.0", "lodash": "4.17.20", "@babel/traverse": "7.22.0" },
+  "devDependencies": { "braces": "3.0.2" } }

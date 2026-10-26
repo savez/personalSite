@@ -5,3 +5,4 @@ data/*
 .superpowers/
 resources/_gen/
 docs/
+assets/advisories-db/

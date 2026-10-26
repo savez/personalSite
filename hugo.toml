@@ -1,4 +1,4 @@
-2baseURL = 'https://smzstudio.it/'
+baseURL = 'https://smzstudio.it/'
 locale = 'it-IT'
 title = ''
 theme = 'hugo-coder'

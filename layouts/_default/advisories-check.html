@@ -1,0 +1,93 @@
+{{ define "title" }}{{ .Title }} · {{ .Site.Title }}{{ end }}
+{{ define "content" }}
+{{/*
+  The dataset is built by scripts/fetch-advisories.mjs into assets/advisories-db/
+  (gitignored) and published here with a fingerprint, so a new build never
+  serves a stale cached copy. All matching happens in assets/js/check/: the
+  visitor's file is read with FileReader and never sent anywhere.
+*/}}
+{{ $dbUrls := dict }}
+{{ range $eco := slice "npm" "composer" }}
+  {{ with resources.Get (printf "advisories-db/%s.json" $eco) }}
+    {{ $dbUrls = merge $dbUrls (dict $eco (. | fingerprint).RelPermalink) }}
+  {{ end }}
+{{ end }}
+
+<section class="container page adv-page chk-page">
+  <article>
+    <p class="page-eyebrow">$ advisories check <span class="chk-eyebrow-file">./composer.lock</span></p>
+    <h1>Il tuo progetto è a rischio?</h1>
+    <p class="lead">Carica il file delle dipendenze: confronto le versioni che usi con tutte le advisory revisionate del GitHub Advisory Database e ti dico quali pacchetti aggiornare, e a che versione.</p>
+
+    <div id="chk" class="chk"
+         data-db-npm="{{ index $dbUrls "npm" }}"
+         data-db-composer="{{ index $dbUrls "composer" }}"
+         data-page-url="{{ .Permalink }}">
+
+      <form class="chk-input" novalidate>
+        <label class="chk-drop" for="chk-file">
+          <input id="chk-file" type="file" class="sr-only"
+                 accept=".lock,.json,.yaml,.yml,application/json,text/plain">
+          <span class="chk-drop-title">Trascina qui il file, o <span class="chk-drop-pick">sceglilo dal computer</span></span>
+          <span class="chk-drop-formats mono">composer.lock · package-lock.json · yarn.lock · pnpm-lock.yaml · composer.json · package.json</span>
+        </label>
+
+        <details class="chk-paste">
+          <summary class="mono">oppure incolla il contenuto</summary>
+          <label class="sr-only" for="chk-text">Contenuto del file</label>
+          <textarea id="chk-text" rows="8" spellcheck="false" placeholder="incolla qui composer.lock, package-lock.json, yarn.lock…"></textarea>
+          <button type="submit" class="chk-btn mono">controlla</button>
+        </details>
+
+        <p class="chk-privacy mono">// il file viene letto solo in questa pagina: nessun upload, nessun dato inviato</p>
+      </form>
+
+      <p class="chk-status mono" role="status" aria-live="polite" hidden></p>
+
+      <section class="chk-results" hidden aria-labelledby="chk-results-title">
+        <h2 id="chk-results-title" class="sr-only">Risultato</h2>
+        <div class="chk-summary">
+          <p class="chk-summary-line mono"></p>
+          <div class="chk-summary-sev mono"></div>
+        </div>
+        <div class="chk-toolbar">
+          <div class="chk-filters mono" role="group" aria-label="Filtra i risultati">
+            <label class="chk-toggle" data-filter="direct"><input type="checkbox"> solo dipendenze dirette</label>
+            <label class="chk-toggle" data-filter="dev"><input type="checkbox" checked> includi dev</label>
+          </div>
+          <div class="chk-actions mono">
+            <button type="button" class="chk-copy">copia report markdown</button>
+            <button type="button" class="chk-reset">controlla un altro file</button>
+          </div>
+        </div>
+        <div class="chk-list"></div>
+        <p class="chk-empty" hidden></p>
+        <details class="chk-unverifiable" hidden>
+          <summary class="mono"></summary>
+          <p class="chk-note">Versioni che non si possono confrontare: branch (<code>dev-main</code>), riferimenti git, percorsi locali o range senza un minimo (<code>*</code>).</p>
+          <ul class="mono"></ul>
+        </details>
+      </section>
+    </div>
+
+    <footer class="adv-sources chk-about">
+      <h2 class="mono">// come funziona</h2>
+      <ul class="adv-sources-list">
+        <li><span class="adv-sources-what">I file <strong>.lock</strong> hanno le versioni esatte installate: il risultato è preciso, incluse le dipendenze indirette.</span></li>
+        <li><span class="adv-sources-what"><strong>composer.json</strong> e <strong>package.json</strong> hanno solo dei range (<code>^12.30</code>): controllo la versione più bassa ammessa e segnalo le vulnerabilità come <em>possibili</em>. Per la certezza usa il lock.</span></li>
+        <li><span class="adv-sources-what">«Aggiorna a» è la versione più bassa che corregge <em>tutte</em> le advisory note per quel pacchetto. Quando un bollettino ACN o CERT-EU recente cita la CVE, trovi anche il link alle mitigazioni.</span></li>
+        <li><span class="adv-sources-what">Dataset: advisory revisionate npm e composer del <a href="https://github.com/advisories" target="_blank" rel="noopener">GitHub Advisory Database</a>, aggiornate ogni 6 ore. <a href="{{ "advisories/" | relLangURL }}">Tutte le advisory recenti →</a></span></li>
+      </ul>
+    </footer>
+  </article>
+</section>
+
+{{ $opts := dict "minify" (not hugo.IsServer) "format" "iife" "target" "es2018" }}
+{{ $js := resources.Get "js/check/index.mjs" | js.Build $opts }}
+{{ if hugo.IsServer }}
+  <script src="{{ $js.RelPermalink }}" defer></script>
+{{ else }}
+  {{ $js = $js | fingerprint }}
+  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{ end }}
+{{ end }}

@@ -1,0 +1,29 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  lodash:
+    specifier: 4.17.20
+    version: 4.17.20
+
+devDependencies:
+  braces:
+    specifier: 3.0.2
+    version: 3.0.2
+
+packages:
+
+  /@babel/traverse@7.22.0(supports-color@8.1.1):
+    resolution: {integrity: sha512-abc}
+    dev: false
+
+  /braces@3.0.2:
+    resolution: {integrity: sha512-def}
+    dev: true
+
+  /lodash@4.17.20:
+    resolution: {integrity: sha512-ghi}
+    dev: false

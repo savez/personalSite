@@ -53,6 +53,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/fetch-advisories.mjs
+      - name: Test the advisories check engine
+        run: node --test 'tests/**/*.test.mjs'
       - name: Check repo inactivity
         id: inactivity
         run: |

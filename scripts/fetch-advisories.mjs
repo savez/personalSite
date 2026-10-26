@@ -2,11 +2,18 @@
 /**
  * fetch-advisories.mjs — builds the data behind /advisories.
  *
- * Writes two files that Hugo loads as site.Data.vulns and site.Data.alerts:
+ * Writes two files that Hugo loads as hugo.Data.vulns and hugo.Data.alerts:
  *
  *   data/vulns.json   vulnerabilities, tagged by category
  *                     (npm, composer, actions, nodejs, php, laravel)
  *   data/alerts.json  CERT-EU + CSIRT Italia bulletins of the last ALERT_HOURS
+ *
+ * and the full dataset behind /advisories/check/, served as static JSON and
+ * matched against the visitor's lockfile in their browser:
+ *
+ *   assets/advisories-db/npm.json       every reviewed npm advisory
+ *   assets/advisories-db/composer.json  every reviewed composer advisory
+ *                                       { packages: { name: [advisory…] } }
  *
  * Sources:
  *   - GitHub Advisory DB, reviewed: one page per ecosystem + the Laravel packages
@@ -33,6 +40,7 @@
  *   UNREVIEWED_DAYS         – unreviewed scan window in days   (default: 7)
  *   ALERT_HOURS             – alert window in hours            (default: 72)
  *   ADVISORIES_OUT_DIR      – output directory                 (default: data)
+ *   ADVISORIES_DB_DIR       – full dataset directory           (default: assets/advisories-db)
  *
  * Requires Node.js 22+ (native fetch). CI pins Node 24.
  */
@@ -44,6 +52,8 @@ const TOKEN           = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN ?? '';
 const UNREVIEWED_DAYS = Number(process.env.UNREVIEWED_DAYS ?? 7);
 const ALERT_HOURS     = Number(process.env.ALERT_HOURS ?? 72);
 const OUT_DIR         = resolve(process.env.ADVISORIES_OUT_DIR ?? 'data');
+const DB_DIR          = resolve(process.env.ADVISORIES_DB_DIR ?? 'assets/advisories-db');
+const DB_ECOSYSTEMS   = ['npm', 'composer'];
 
 const GH_API  = 'https://api.github.com';
 const NODE_WG = 'https://raw.githubusercontent.com/nodejs/security-wg/main/vuln/core/index.json';
@@ -218,6 +228,43 @@ async function unreviewed() {
   }
   console.log(`  unreviewed: ${pages} pages scanned`);
   return out;
+}
+
+// Every reviewed advisory of an ecosystem, keyed by package. Only what the
+// check page needs: ranges to match the installed version and the fix.
+// One advisory can cover several packages; each gets its own ranges.
+async function fullDataset(eco) {
+  let url = `${GH_API}/advisories?type=reviewed&ecosystem=${eco}&per_page=100`;
+  const packages = {};
+  let count = 0;
+  while (url) {
+    const { body, link } = await getJSON(url, { github: true });
+    for (const adv of body) {
+      if (adv.withdrawn_at) { continue; }
+      count++;
+      const score = cvssScore(adv.cvss_severities);
+      const byPkg = new Map();
+      for (const v of adv.vulnerabilities ?? []) {
+        const name = v.package?.name;
+        if (!name || v.package.ecosystem !== eco || !v.vulnerable_version_range) { continue; }
+        if (!byPkg.has(name)) { byPkg.set(name, []); }
+        byPkg.get(name).push([v.vulnerable_version_range, v.first_patched_version ?? null]);
+      }
+      for (const [name, ranges] of byPkg) {
+        (packages[name] ??= []).push({
+          id: adv.ghsa_id,
+          cve: adv.cve_id || '',
+          sev: normSeverity(adv.severity, score),
+          cvss: score,
+          title: oneLine(adv.summary, 120),
+          published: adv.published_at?.slice(0, 10) ?? '',
+          ranges,
+        });
+      }
+    }
+    url = nextLink(link);
+  }
+  return { count, packages };
 }
 
 async function phpSrc() {
@@ -397,6 +444,12 @@ const lists = await Promise.all([
 ]);
 const vulns = merge(lists);
 
+const db = {};
+await Promise.all(DB_ECOSYSTEMS.map(eco => track(`db:${eco}`, async () => {
+  db[eco] = await fullDataset(eco);
+  return Array.from({ length: db[eco].count });
+})));
+
 const feedLists = await Promise.all(Object.keys(FEEDS).map(async k => {
   const items = await track(`rss:${k}`, () => feed(k));
   if (items.length) { await track(`bulletins:${k}`, () => bulletinCves(k, items)); }
@@ -425,6 +478,22 @@ const generated = new Date().toISOString();
 const isFeed = k => k.startsWith('rss:') || k.startsWith('bulletins:');
 const vulnSources = Object.fromEntries(Object.entries(sources).filter(([k]) => !isFeed(k)));
 const alertSources = Object.fromEntries(Object.entries(sources).filter(([k]) => isFeed(k)));
+
+// Mitigation links on the full dataset too: same CVE → bulletin map.
+for (const eco of Object.keys(db)) {
+  for (const list of Object.values(db[eco].packages)) {
+    for (const a of list) {
+      if (a.cve && byCve.has(a.cve)) { a.mitig = byCve.get(a.cve).map(b => ({ src: b.source, url: b.url, date: b.published.slice(0, 10) })); }
+    }
+  }
+}
+
+// A failed ecosystem keeps last build's file if there is one (local runs);
+// in CI there is none and the check page reports the dataset as unavailable.
+mkdirSync(DB_DIR, { recursive: true });
+for (const [eco, { count, packages }] of Object.entries(db)) {
+  writeFileSync(resolve(DB_DIR, `${eco}.json`), JSON.stringify({ generated: new Date().toISOString(), ecosystem: eco, count, packages }));
+}
 
 mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(resolve(OUT_DIR, 'vulns.json'),
