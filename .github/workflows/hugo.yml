@@ -4,6 +4,9 @@ name: Deploy Hugo site to Pages
 on:
   push:
     branches: ["main"]
+  # PRs run the build (fetch, tests, hugo) without deploying.
+  pull_request:
+    branches: ["main"]
   schedule:
     # Every 6 hours: the alert banner shows the last 72h of CERT bulletins.
     # 06:00 is its own entry so the inactivity reminder can key on it (once a day).
@@ -16,9 +19,10 @@ permissions:
   pages: write
   id-token: write
 
+# PR builds get their own group so they never queue behind (or block) a deploy.
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.ref) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 defaults:
   run:
@@ -28,7 +32,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HUGO_VERSION: 0.128.0
+      HUGO_VERSION: 0.168.0
       MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
     steps:
       - name: Install Hugo CLI
@@ -92,6 +96,7 @@ jobs:
           path: ./public
 
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

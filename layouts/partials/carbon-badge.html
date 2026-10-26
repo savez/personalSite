@@ -16,7 +16,7 @@
   {{ with .showLink   }}{{ $showLink   = . }}{{ end }}
 {{ end }}
 
-{{ $carbon := index site.Data "carbon" }}
+{{ $carbon := index hugo.Data "carbon" }}
 {{ with $carbon }}
   {{ if .gco2e }}
   {{ $ctx := dict "gco2e" .gco2e "rating" .rating "cleanerPct" (mul .cleanerThan 100.0) }}

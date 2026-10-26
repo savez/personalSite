@@ -1,5 +1,5 @@
 2baseURL = 'https://smzstudio.it/'
-languageCode = 'it-IT'
+locale = 'it-IT'
 title = ''
 theme = 'hugo-coder'
 
@@ -183,7 +183,7 @@ weight = 6
 url = "https://substack.com/@smzstudio"
 
 [languages.en]
-languageName = ":uk:"
+label = ":uk:"
 
 
 [[languages.en.menu.main]]

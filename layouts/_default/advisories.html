@@ -2,11 +2,11 @@
 {{ define "content" }}
 {{/*
   Data comes from scripts/fetch-advisories.mjs, run by the Pages workflow before `hugo`:
-  site.Data.vulns (vulnerabilities by category) and site.Data.alerts (CERT bulletins).
+  hugo.Data.vulns (vulnerabilities by category) and hugo.Data.alerts (CERT bulletins).
   Both files are gitignored; locally run the script once or the page renders empty.
 */}}
-{{ $vulns := site.Data.vulns | default dict }}
-{{ $alerts := site.Data.alerts | default dict }}
+{{ $vulns := hugo.Data.vulns | default dict }}
+{{ $alerts := hugo.Data.alerts | default dict }}
 {{ $items := $vulns.items | default slice }}
 {{ $alertItems := $alerts.items | default slice }}
 
