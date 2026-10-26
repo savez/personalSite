@@ -70,6 +70,7 @@
                 <span class="adv-alerts-src mono">{{ .source }}</span>
                 {{ range .categories }}<span class="adv-eco mono">{{ index $catLabels . | default . }}</span>{{ end }}
                 <a href="{{ .url }}" target="_blank" rel="noopener">{{ .title }}</a>
+                {{ with .cves }}<span class="adv-alerts-cves mono">{{ delimit (first 3 .) " · " }}{{ if gt (len .) 3 }} +{{ sub (len .) 3 }}{{ end }}</span>{{ end }}
               </li>
             {{ end }}
           </ul>
@@ -129,6 +130,11 @@
               {{ with .cve }}<a href="https://nvd.nist.gov/vuln/detail/{{ . }}" target="_blank" rel="noopener">{{ . }}</a>{{ end }}
               {{ if and (not .ghsa) .cve }}<a href="{{ .url }}" target="_blank" rel="noopener">release note</a>{{ end }}
               {{ with .patched }}<span class="adv-fix">patch: {{ . }}</span>{{ end }}
+              {{ with .bulletins }}
+                <span class="adv-mitig">mitigazione:
+                  {{ range $i, $b := . }}{{ if $i }} · {{ end }}<a href="{{ $b.url }}" target="_blank" rel="noopener" title="{{ $b.title }}">{{ if eq $b.source "CSIRT Italia" }}ACN{{ else }}{{ $b.source }}{{ end }} {{ dateFormat "02/01" $b.published }} ↗</a>{{ end }}
+                </span>
+              {{ end }}
               <span class="adv-src">fonte: {{ with $src.url }}<a href="{{ . }}" target="_blank" rel="noopener">{{ $src.label }}</a>{{ else }}{{ $src.label }}{{ end }}</span>
             </div>
           </div>
@@ -147,8 +153,10 @@
       <h2 class="mono">// fonti</h2>
       {{ $status := merge ($vulns.sources | default dict) ($alerts.sources | default dict) }}
       {{ $rows := slice
-        (dict "key" "rss:cert-eu" "name" "CERT-EU" "url" "https://cert.europa.eu/publications/security-advisories/" "what" (printf "alert · bollettini delle ultime %v ore" ($alerts.window_hours | default 72)))
-        (dict "key" "rss:acn" "name" "CSIRT Italia (ACN)" "url" "https://www.acn.gov.it/portale/csirt-italia" "what" (printf "alert · bollettini delle ultime %v ore" ($alerts.window_hours | default 72)))
+        (dict "key" "rss:cert-eu" "name" "CERT-EU" "url" "https://cert.europa.eu/publications/security-advisories/" "what" (printf "alert · feed RSS, nel banner le ultime %v ore" ($alerts.window_hours | default 72)))
+        (dict "key" "bulletins:cert-eu" "name" "CERT-EU · raccomandazioni" "url" "https://cert.europa.eu/publications/security-advisories/" "what" "mitigazioni · bollettini del feed collegati per CVE")
+        (dict "key" "rss:acn" "name" "CSIRT Italia (ACN)" "url" "https://www.acn.gov.it/portale/csirt-italia" "what" (printf "alert · feed RSS, nel banner le ultime %v ore" ($alerts.window_hours | default 72)))
+        (dict "key" "bulletins:acn" "name" "ACN · azioni di mitigazione" "url" "https://www.acn.gov.it/portale/csirt-italia/alert-e-bollettini" "what" "mitigazioni · bollettini del feed collegati per CVE")
         (dict "key" "github-reviewed:npm" "name" "GitHub Advisory DB · npm" "url" "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm" "what" "pacchetti js · ultime 100 revisionate")
         (dict "key" "github-reviewed:composer" "name" "GitHub Advisory DB · composer" "url" "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Acomposer" "what" "composer · ultime 100 revisionate")
         (dict "key" "github-reviewed:laravel" "name" "GitHub Advisory DB · laravel" "url" "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Acomposer+laravel" "what" "laravel · pacchetti laravel/*, illuminate/*, livewire")
@@ -169,7 +177,7 @@
           </li>
         {{ end }}
       </ul>
-      <p class="adv-sources-note">Le voci presenti in più fonti sono unite per CVE. Le date delle advisory Node.js senza data esatta indicano il mese della security release.</p>
+      <p class="adv-sources-note">Le voci presenti in più fonti sono unite per CVE. Il link «mitigazione» compare quando un bollettino ACN o CERT-EU recente cita la CVE: i feed coprono circa gli ultimi 10 giorni per ACN e gli ultimi 10 bollettini per CERT-EU. Le date delle advisory Node.js senza data esatta indicano il mese della security release.</p>
     </footer>
   </article>
 </section>

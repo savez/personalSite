@@ -20,7 +20,10 @@
  *   - php/php-src repository advisories (PHP runtime). The global DB does not
  *     import them: CVE-2026-109618 and friends are only here.
  *   - nodejs/security-wg vuln/core/index.json (Node.js core)
- *   - CERT-EU and CSIRT Italia (ACN) RSS feeds
+ *   - CERT-EU and CSIRT Italia (ACN) RSS feeds. Every bulletin in the feeds is
+ *     also opened to read the CVEs it covers: a vulnerability row whose CVE
+ *     appears in a bulletin links to it, since that's where the mitigation
+ *     advice lives (ACN "Azioni di mitigazione", CERT-EU "Recommendations").
  *
  * Every source is isolated: a failure is logged, recorded in `sources` with
  * ok:false, and the build goes on with whatever the other sources returned.
@@ -46,10 +49,14 @@ const GH_API  = 'https://api.github.com';
 const NODE_WG = 'https://raw.githubusercontent.com/nodejs/security-wg/main/vuln/core/index.json';
 const NODE_WG_LIMIT = 100;
 
+// `body` marks where the bulletin text starts in its HTML page: CVEs are read
+// from there on, so ones named in the site's menus or related-news boxes don't count.
 const FEEDS = {
-  'cert-eu': { label: 'CERT-EU',       url: 'https://cert.europa.eu/publications/security-advisories-rss' },
-  'acn':     { label: 'CSIRT Italia',  url: 'https://www.acn.gov.it/portale/feedrss/-/journal/rss/20119/723192' },
+  'cert-eu': { label: 'CERT-EU',      url: 'https://cert.europa.eu/publications/security-advisories-rss', body: 'publication--body' },
+  'acn':     { label: 'CSIRT Italia', url: 'https://www.acn.gov.it/portale/feedrss/-/journal/rss/20119/723192', body: 'col-lg-8 col-xl-9' },
 };
+const BULLETIN_CONCURRENCY = 5;
+const CVE_RE = /CVE-\d{4}-\d{4,}/g;
 
 const LARAVEL_PACKAGES = [
   'laravel/framework', 'laravel/laravel', 'laravel/sanctum', 'laravel/passport',
@@ -321,17 +328,22 @@ function parseDate(s) {
   return Number.isNaN(t) ? null : new Date(t);
 }
 
-async function feed(key) {
-  const { label, url } = FEEDS[key];
+async function getText(url) {
   const res = await fetch(url, {
     headers: { 'User-Agent': 'Mozilla/5.0 (compatible; smzstudio-advisories)' },
     signal: AbortSignal.timeout(30_000),
   });
   if (!res.ok) { throw new Error(`${res.status} ${res.statusText} — ${url}`); }
-  const xml = await res.text();
+  return res.text();
+}
+
+// Every item in the feed, not just the alert window: older bulletins still
+// carry mitigation advice for the vulnerability rows.
+async function feed(key) {
+  const { label, url } = FEEDS[key];
+  const xml = await getText(url);
   const items = [...xml.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/gi)].map(m => m[1]);
   if (!items.length && !/<rss\b/i.test(xml)) { throw new Error(`not an RSS feed — ${url}`); }
-  const since = Date.now() - ALERT_HOURS * 3_600_000;
   return items.map(x => {
     const date = parseDate(tag(x, 'dc:date')) ?? parseDate(tag(x, 'pubDate'));
     const title = oneLine(stripTags(tag(x, 'title')), 200);
@@ -344,8 +356,32 @@ async function feed(key) {
       published: date?.toISOString() ?? null,
       source: label,
       categories: [...new Set(ALERT_RULES.filter(r => r.re.test(text)).map(r => r.cat))],
+      cves: [],
     };
-  }).filter(a => a.published && Date.parse(a.published) >= since);
+  }).filter(a => a.published && a.url);
+}
+
+// Opens each bulletin page and fills `cves`. A page that fails keeps cves: [];
+// if every page fails the source is reported as down.
+async function bulletinCves(key, items) {
+  const marker = FEEDS[key].body;
+  let failed = 0;
+  const queue = [...items];
+  async function worker() {
+    for (let it = queue.shift(); it; it = queue.shift()) {
+      try {
+        const html = await getText(it.url);
+        const start = html.indexOf(marker);
+        const body = start >= 0 ? html.slice(start, html.indexOf('<footer', start) >>> 0) : html;
+        it.cves = [...new Set(body.match(CVE_RE) ?? [])].sort();
+      } catch {
+        failed++;
+      }
+    }
+  }
+  await Promise.all(Array.from({ length: BULLETIN_CONCURRENCY }, worker));
+  if (items.length && failed === items.length) { throw new Error(`all ${failed} bulletin pages failed`); }
+  return items.filter(it => it.cves.length);
 }
 
 // ---------- main ----------
@@ -361,12 +397,34 @@ const lists = await Promise.all([
 ]);
 const vulns = merge(lists);
 
-const alertLists = await Promise.all(Object.keys(FEEDS).map(k => track(`rss:${k}`, () => feed(k))));
-const alerts = alertLists.flat().sort((a, b) => b.published.localeCompare(a.published));
+const feedLists = await Promise.all(Object.keys(FEEDS).map(async k => {
+  const items = await track(`rss:${k}`, () => feed(k));
+  if (items.length) { await track(`bulletins:${k}`, () => bulletinCves(k, items)); }
+  return items;
+}));
+const bulletins = feedLists.flat().sort((a, b) => b.published.localeCompare(a.published));
+
+// CVE → bulletins that cover it, attached to the matching rows.
+// ACN's monthly "Operational Summary" lists CVEs but carries no mitigation advice.
+const byCve = new Map();
+for (const b of bulletins) {
+  if (/^operational summary\b/i.test(b.title)) { continue; }
+  for (const cve of b.cves) {
+    if (!byCve.has(cve)) { byCve.set(cve, []); }
+    byCve.get(cve).push({ source: b.source, url: b.url, title: b.title, published: b.published });
+  }
+}
+for (const v of vulns) {
+  if (v.cve && byCve.has(v.cve)) { v.bulletins = byCve.get(v.cve); }
+}
+
+const since = Date.now() - ALERT_HOURS * 3_600_000;
+const alerts = bulletins.filter(a => Date.parse(a.published) >= since);
 
 const generated = new Date().toISOString();
-const vulnSources = Object.fromEntries(Object.entries(sources).filter(([k]) => !k.startsWith('rss:')));
-const alertSources = Object.fromEntries(Object.entries(sources).filter(([k]) => k.startsWith('rss:')));
+const isFeed = k => k.startsWith('rss:') || k.startsWith('bulletins:');
+const vulnSources = Object.fromEntries(Object.entries(sources).filter(([k]) => !isFeed(k)));
+const alertSources = Object.fromEntries(Object.entries(sources).filter(([k]) => isFeed(k)));
 
 mkdirSync(OUT_DIR, { recursive: true });
 writeFileSync(resolve(OUT_DIR, 'vulns.json'),
@@ -378,3 +436,4 @@ const perCat = {};
 for (const v of vulns) { for (const c of v.categories) { perCat[c] = (perCat[c] ?? 0) + 1; } }
 console.log(`→ ${vulns.length} vulns`, perCat);
 console.log(`→ ${alerts.length} alerts (${alerts.filter(a => a.categories.length).length} relevant)`);
+console.log(`→ ${vulns.filter(v => v.bulletins).length} vulns linked to a CERT bulletin`);

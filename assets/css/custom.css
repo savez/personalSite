@@ -612,6 +612,10 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 .adv-meta { display: flex; gap: 0.4rem 1.4rem; flex-wrap: wrap; font-size: 1.1rem; color: var(--muted); }
 .adv-meta a { color: var(--accent); }
 .adv-meta .adv-fix { color: var(--muted); overflow-wrap: anywhere; }
+.adv-meta .adv-mitig { color: var(--sev-critical); }
+.adv-meta .adv-mitig a { color: var(--sev-critical); border-bottom: 1px solid currentColor; }
+.adv-meta .adv-mitig a:hover { color: var(--ink); }
+.adv-alerts-cves { flex-basis: 100%; font-size: 1.05rem; color: var(--muted); }
 .adv-meta .adv-src a { color: var(--muted); border-bottom: 1px solid var(--line); }
 .adv-meta .adv-src a:hover { color: var(--accent); }
 
