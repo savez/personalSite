@@ -36,7 +36,7 @@
 
 <section class="container page adv-page">
   <article>
-    <p class="page-eyebrow">$ gh advisory list --reviewed</p>
+    <p class="page-eyebrow">$ advisories --sources github,php-src,nodejs,cert</p>
     <h1>Security advisories</h1>
     <p class="adv-updated mono">// aggiornato {{ with $vulns.generated }}{{ dateFormat "2006-01-02 15:04" . }}{{ else }}{{ now.UTC.Format "2006-01-02 15:04" }}{{ end }} UTC · <a href="#adv-sources">fonti</a></p>
 
