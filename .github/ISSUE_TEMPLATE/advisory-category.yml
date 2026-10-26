@@ -1,0 +1,24 @@
+name: Nuova categoria advisories
+description: Chiedi di aggiungere una categoria alla pagina /advisories
+title: "[advisories] categoria: "
+body:
+  - type: input
+    id: category
+    attributes:
+      label: Categoria
+      description: Il linguaggio, il framework o lo strumento da seguire.
+      placeholder: es. typescript, symfony, docker
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Fonti
+      description: Da dove arrivano le advisory di questa categoria? Ecosistema GitHub, repo con security advisories, feed ufficiale…
+      placeholder: es. https://github.com/symfony/symfony/security/advisories
+  - type: input
+    id: example
+    attributes:
+      label: Esempio
+      description: Una CVE o GHSA che ti aspetteresti di vedere nella categoria.
+      placeholder: es. CVE-2026-12345
