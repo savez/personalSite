@@ -503,6 +503,18 @@ if (fop.length) {
     };
   });
   vulns.splice(0, vulns.length, ...merge([vulns, recent]));
+
+  // Rows already on the list from GitHub (any age) that FriendsOfPHP also
+  // covers: the merged dataset knows, so the row should say so too.
+  for (const v of vulns) {
+    if (!v.categories.includes('composer') || (v.sources ?? [v.source]).includes('friendsofphp')) { continue; }
+    const entry = db.composer?.packages[v.pkg]?.find(a =>
+      a.src?.includes('friendsofphp') && ((v.ghsa && a.id === v.ghsa) || (v.cve && a.cve === v.cve)));
+    if (entry) {
+      v.sources = [...(v.sources ?? [v.source]), 'friendsofphp'];
+      v.fop = `${FOP_BLOB}/${entry.fop}`;
+    }
+  }
   const st = sources.friendsofphp;
   console.log(`  friendsofphp: ${st.merged ?? 0} merged by id, ${st.mergedByRange ?? 0} by range, ${st.added ?? 0} added (${st.enriched ?? 0} with GitHub severity), ${fopSkipped} skipped, ${recent.length} recent`);
 }
