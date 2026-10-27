@@ -78,7 +78,11 @@ export function toMarkdown({ format, findings, checked, unverifiable, generated,
   if (findings.length) {
     lines.push('| Gravità | Pacchetto | Versione | Aggiorna a | Advisory |', '|---|---|---|---|---|');
     for (const f of findings) {
-      const advs = f.advisories.map(a => `[${a.cve || a.id}](https://github.com/advisories/${a.id})`).join(', ');
+      const advs = f.advisories.map(a => {
+        const url = /^GHSA-/i.test(a.id) && (a.src ?? ['github']).includes('github') ? `https://github.com/advisories/${a.id}`
+          : a.fop ? `https://github.com/FriendsOfPHP/security-advisories/blob/master/${a.fop}` : '';
+        return url ? `[${a.cve || a.id}](${url})` : (a.cve || a.id);
+      }).join(', ');
       const ver = f.exact ? f.version : `${f.version} (possibile)`;
       lines.push(`| ${f.severity}${f.cvss ? ` ${f.cvss.toFixed(1)}` : ''} | \`${f.name}\` | ${ver} | ${f.fixVersion ? `≥ ${f.fixVersion}` : 'nessuna patch'} | ${advs} |`);
     }
