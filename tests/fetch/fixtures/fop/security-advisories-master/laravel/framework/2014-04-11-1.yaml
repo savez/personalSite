@@ -1,0 +1,10 @@
+title:     Hijacked authentication cookies vulnerability
+link:      http://laravel.com/docs/upgrade
+branches:
+    4.0.x:
+        time:     ~
+        versions: ['>=4.0.0', '<4.0.99']
+    4.1.x:
+        time:     null
+        versions: ['>=4.1.0', '<4.1.26']
+reference: composer://laravel/framework

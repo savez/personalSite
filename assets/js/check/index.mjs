@@ -11,6 +11,12 @@ import { match, summarize, toMarkdown } from './match.mjs';
 const root = document.getElementById('chk');
 if (root) { init(root); }
 
+const FOP_BLOB = 'https://github.com/FriendsOfPHP/security-advisories/blob/master';
+const SRC_LABEL = { github: 'GitHub Advisory DB', friendsofphp: 'FriendsOfPHP' };
+
+// Advisory links come from third-party data (FriendsOfPHP files): only http(s).
+const safeUrl = u => (/^https?:\/\//i.test(String(u ?? '')) ? u : null);
+
 const SEV_LABEL = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low', unknown: 'Unknown' };
 const ERRORS = {
   'unknown-format': 'Formato non riconosciuto. Supportati: composer.lock, package-lock.json, yarn.lock, pnpm-lock.yaml, composer.json, package.json.',
@@ -158,9 +164,13 @@ function init(root) {
   }
 
   function renderAdvisory(a) {
-    const links = [
-      el('a', { href: `https://github.com/advisories/${a.id}`, target: '_blank', rel: 'noopener', text: a.id }),
-    ];
+    const links = [];
+    // A GHSA only FriendsOfPHP knows may not be in GitHub's global DB yet: link the source instead.
+    if (/^GHSA-/i.test(a.id) && (a.src ?? ['github']).includes('github')) {
+      links.push(el('a', { href: `https://github.com/advisories/${a.id}`, target: '_blank', rel: 'noopener', text: a.id }));
+    } else if (safeUrl(a.link)) {
+      links.push(el('a', { href: a.link, target: '_blank', rel: 'noopener', text: /^GHSA-/i.test(a.id) ? `${a.id} ↗` : 'advisory ↗' }));
+    }
     if (a.cve) { links.push(el('a', { href: `https://nvd.nist.gov/vuln/detail/${a.cve}`, target: '_blank', rel: 'noopener', text: a.cve })); }
     links.push(el('span', { class: 'adv-fix', text: a.fixed ? `fix ≥ ${a.fixed}` : 'nessuna patch' }));
     if (a.mitig?.length) {
@@ -168,6 +178,11 @@ function init(root) {
         ...a.mitig.flatMap((m, i) => [i ? ' · ' : null,
           el('a', { href: m.url, target: '_blank', rel: 'noopener', text: `${m.src === 'CSIRT Italia' ? 'ACN' : m.src} ${m.date.slice(8, 10)}/${m.date.slice(5, 7)} ↗` })])));
     }
+    const src = a.src ?? ['github'];
+    links.push(el('span', { class: 'adv-src' }, 'fonte: ', ...src.flatMap((s, i) => [i ? ' + ' : null,
+      s === 'friendsofphp' && a.fop
+        ? el('a', { href: `${FOP_BLOB}/${a.fop}`, target: '_blank', rel: 'noopener', text: SRC_LABEL[s] })
+        : SRC_LABEL[s] ?? s])));
     return el('li', { class: `chk-adv sev-${a.sev}` },
       el('span', { class: 'adv-dot', 'aria-hidden': 'true', title: a.sev }),
       el('div', {},

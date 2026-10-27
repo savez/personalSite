@@ -29,6 +29,7 @@
   "github-unreviewed" (dict "label" "GitHub Advisory DB · unreviewed" "url" "https://github.com/advisories?query=type%3Aunreviewed")
   "php-src" (dict "label" "php-src security advisories" "url" "https://github.com/php/php-src/security/advisories")
   "nodejs-wg" (dict "label" "Node.js security-wg" "url" "https://github.com/nodejs/security-wg/tree/main/vuln/core")
+  "friendsofphp" (dict "label" "FriendsOfPHP" "url" "https://github.com/FriendsOfPHP/security-advisories")
 }}
 
 {{ $relevant := slice }}
@@ -115,7 +116,7 @@
         {{ $src := index $sourceInfo .source | default (dict "label" .source "url" "") }}
         {{ $catNames := slice }}
         {{ range .categories }}{{ $catNames = $catNames | append (index $catLabels . | default .) }}{{ end }}
-        {{ $search := lower (printf "%s %s %s %s %s %s" .pkg .title .ghsa .cve (delimit $catNames " ") $src.label) }}
+        {{ $search := lower (printf "%s %s %s %s %s %s %s" .pkg .title .ghsa .cve (delimit $catNames " ") $src.label (delimit (.sources | default (slice .source)) " ")) }}
         <article class="adv-row" data-cats="{{ delimit .categories " " }}" data-sev="{{ $sev }}" data-search="{{ $search }}">
           <div class="adv-sev sev-{{ $sev }}">
             <span class="adv-badge mono"><span class="adv-dot" aria-hidden="true"></span> {{ index $sevLabels $sev }}</span>
@@ -128,14 +129,20 @@
             <div class="adv-meta mono">
               {{ if .ghsa }}<a href="{{ .url }}" target="_blank" rel="noopener">{{ .ghsa }}</a>{{ else if not .cve }}<a href="{{ .url }}" target="_blank" rel="noopener">dettagli</a>{{ end }}
               {{ with .cve }}<a href="https://nvd.nist.gov/vuln/detail/{{ . }}" target="_blank" rel="noopener">{{ . }}</a>{{ end }}
-              {{ if and (not .ghsa) .cve }}<a href="{{ .url }}" target="_blank" rel="noopener">release note</a>{{ end }}
+              {{ if and (not .ghsa) .cve }}<a href="{{ .url }}" target="_blank" rel="noopener">{{ cond (eq .source "nodejs-wg") "release note" "advisory" }}</a>{{ end }}
               {{ with .patched }}<span class="adv-fix">patch: {{ . }}</span>{{ end }}
               {{ with .bulletins }}
                 <span class="adv-mitig">mitigazione:
                   {{ range $i, $b := . }}{{ if $i }} · {{ end }}<a href="{{ $b.url }}" target="_blank" rel="noopener" title="{{ $b.title }}">{{ if eq $b.source "CSIRT Italia" }}ACN{{ else }}{{ $b.source }}{{ end }} {{ dateFormat "02/01" $b.published }} ↗</a>{{ end }}
                 </span>
               {{ end }}
-              <span class="adv-src">fonte: {{ with $src.url }}<a href="{{ . }}" target="_blank" rel="noopener">{{ $src.label }}</a>{{ else }}{{ $src.label }}{{ end }}</span>
+              {{ $row := . }}
+              <span class="adv-src">fonte:
+                {{- range $i, $s := (.sources | default (slice .source)) }}
+                  {{- $info := index $sourceInfo $s | default (dict "label" $s "url" "") }}
+                  {{- $url := cond (and (eq $s "friendsofphp") $row.fop) $row.fop $info.url }}
+                  {{- if $i }} +{{ end }} {{ with $url }}<a href="{{ . }}" target="_blank" rel="noopener">{{ $info.label }}</a>{{ else }}{{ $info.label }}{{ end }}
+                {{- end }}</span>
             </div>
           </div>
         </article>
@@ -163,6 +170,7 @@
         (dict "key" "github-reviewed:actions" "name" "GitHub Advisory DB · actions" "url" "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Aactions" "what" "github actions · ultime 100 revisionate")
         (dict "key" "php-src" "name" "php-src security advisories" "url" "https://github.com/php/php-src/security/advisories" "what" "php · runtime")
         (dict "key" "nodejs-wg" "name" "Node.js security-wg" "url" "https://github.com/nodejs/security-wg/tree/main/vuln/core" "what" "nodejs · runtime, ultime 100")
+        (dict "key" "friendsofphp" "name" "FriendsOfPHP/security-advisories" "url" "https://github.com/FriendsOfPHP/security-advisories" "what" "composer · database della comunità PHP, unito a GitHub per CVE, GHSA o range")
         (dict "key" "github-unreviewed" "name" "GitHub Advisory DB · unreviewed" "url" "https://github.com/advisories?query=type%3Aunreviewed" "what" (printf "php, nodejs, laravel · non revisionate degli ultimi %v giorni" ($vulns.window_days | default 7)))
       }}
       <ul class="adv-sources-list">
@@ -172,7 +180,7 @@
             <a href="{{ .url }}" target="_blank" rel="noopener">{{ .name }}</a>
             <span class="adv-sources-what">{{ .what }}</span>
             {{ if not $st }}<span class="adv-sources-st">—</span>
-            {{ else if $st.ok }}<span class="adv-sources-st ok">{{ $st.count }} {{ cond (eq $st.count 1) "voce" "voci" }}</span>
+            {{ else if $st.ok }}<span class="adv-sources-st ok">{{ $st.count }} {{ cond (eq $st.count 1) "voce" "voci" }}{{ with $st.added }} · {{ . }} aggiunte{{ end }}{{ if or $st.merged $st.mergedByRange }} · {{ add ($st.merged | default 0) ($st.mergedByRange | default 0) }} unite{{ end }}</span>
             {{ else }}<span class="adv-sources-st ko">non raggiunta in questo aggiornamento</span>{{ end }}
           </li>
         {{ end }}

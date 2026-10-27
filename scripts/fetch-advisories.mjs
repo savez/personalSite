@@ -27,6 +27,9 @@
  *   - php/php-src repository advisories (PHP runtime). The global DB does not
  *     import them: CVE-2026-109618 and friends are only here.
  *   - nodejs/security-wg vuln/core/index.json (Node.js core)
+ *   - FriendsOfPHP/security-advisories (composer): merged into the GitHub
+ *     composer dataset by CVE/GHSA, added when GitHub doesn't have it.
+ *     See scripts/lib/friendsofphp.mjs.
  *   - CERT-EU and CSIRT Italia (ACN) RSS feeds. Every bulletin in the feeds is
  *     also opened to read the CVEs it covers: a vulnerability row whose CVE
  *     appears in a bulletin links to it, since that's where the mitigation
@@ -47,6 +50,7 @@
 
 import { writeFileSync, mkdirSync } from 'fs';
 import { resolve }                  from 'path';
+import { FOP_TARBALL, FOP_BLOB, readTarGz, parseAdvisory, mergeIntoDataset } from './lib/friendsofphp.mjs';
 
 const TOKEN           = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN ?? '';
 const UNREVIEWED_DAYS = Number(process.env.UNREVIEWED_DAYS ?? 7);
@@ -96,7 +100,7 @@ const ALERT_RULES = [
   { cat: 'actions', re: /\bgithub actions?\b/i },
 ];
 
-const SOURCE_RANK = { 'github-reviewed': 4, 'php-src': 3, 'nodejs-wg': 2, 'github-unreviewed': 1 };
+const SOURCE_RANK = { 'github-reviewed': 4, 'php-src': 3, 'nodejs-wg': 2, 'friendsofphp': 1.5, 'github-unreviewed': 1 };
 
 const sources = {};
 
@@ -336,6 +340,8 @@ function merge(lists) {
         ? { published: lo.published, approx_date: false } : {}),
       ghsa: hi.ghsa || lo.ghsa,
       patched: hi.patched || lo.patched,
+      fop: hi.fop || lo.fop,
+      sources: [...new Set([...(hi.sources ?? [hi.source]), ...(lo.sources ?? [lo.source])])],
     });
   }
   return [...byId.values()].sort((a, b) => String(b.published).localeCompare(String(a.published)));
@@ -443,12 +449,63 @@ const lists = await Promise.all([
   track('github-unreviewed',        () => unreviewed()),
 ]);
 const vulns = merge(lists);
+const FOP_RECENT_DAYS = 90;
 
 const db = {};
 await Promise.all(DB_ECOSYSTEMS.map(eco => track(`db:${eco}`, async () => {
   db[eco] = await fullDataset(eco);
   return Array.from({ length: db[eco].count });
 })));
+
+// FriendsOfPHP: into the composer dataset (check page), and its recent
+// advisories into the /advisories/ list.
+let fopSkipped = 0;
+const fop = await track('friendsofphp', async () => {
+  const res = await fetch(FOP_TARBALL, { signal: AbortSignal.timeout(60_000) });
+  if (!res.ok) { throw new Error(`${res.status} ${res.statusText} — ${FOP_TARBALL}`); }
+  const files = readTarGz(Buffer.from(await res.arrayBuffer()))
+    .filter(f => f.path.endsWith('.yaml') && !f.path.includes('/.github/'));
+  const out = [];
+  for (const f of files) {
+    const rel = f.path.split('/').slice(1).join('/'); // drop the "security-advisories-master/" root
+    const adv = parseAdvisory(f.text, rel);
+    if (adv) { out.push(adv); } else { fopSkipped++; }
+  }
+  if (!out.length) { throw new Error('no advisories parsed'); }
+  return out;
+});
+if (fop.length) {
+  sources.friendsofphp.skipped = fopSkipped;
+  if (db.composer) { Object.assign(sources.friendsofphp, mergeIntoDataset(db.composer.packages, fop)); }
+
+  const since = Date.now() - FOP_RECENT_DAYS * 86_400_000;
+  const recent = fop.filter(f => f.published && Date.parse(f.published) >= since).map(f => {
+    // After the merge the dataset entry carries GitHub's severity when there was a match.
+    const entry = db.composer?.packages[f.pkg]?.find(a => a.fop === f.file);
+    const fromGithub = entry?.src?.includes('github');
+    const ghsa = fromGithub ? entry.id : f.ghsa;
+    return {
+      id: f.cve || ghsa || f.id,
+      title: oneLine(fromGithub ? entry.title : f.title),
+      pkg: f.pkg,
+      categories: LARAVEL_PKG_RE.test(f.pkg) ? ['composer', 'laravel'] : ['composer'],
+      severity: entry?.sev ?? 'unknown',
+      cvss: entry?.cvss ?? null,
+      published: f.published,
+      // A GHSA only FriendsOfPHP knows may not be in GitHub's global DB yet: link the source.
+      url: fromGithub ? `https://github.com/advisories/${ghsa}` : (f.link || `${FOP_BLOB}/${f.file}`),
+      cve: f.cve,
+      ghsa: ghsa || '',
+      patched: [...new Set(f.ranges.map(r => r[1]).filter(Boolean))].join(', '),
+      source: 'friendsofphp',
+      sources: fromGithub ? ['github-reviewed', 'friendsofphp'] : ['friendsofphp'],
+      fop: `${FOP_BLOB}/${f.file}`,
+    };
+  });
+  vulns.splice(0, vulns.length, ...merge([vulns, recent]));
+  const st = sources.friendsofphp;
+  console.log(`  friendsofphp: ${st.merged ?? 0} merged by id, ${st.mergedByRange ?? 0} by range, ${st.added ?? 0} added (${st.enriched ?? 0} with GitHub severity), ${fopSkipped} skipped, ${recent.length} recent`);
+}
 
 const feedLists = await Promise.all(Object.keys(FEEDS).map(async k => {
   const items = await track(`rss:${k}`, () => feed(k));
