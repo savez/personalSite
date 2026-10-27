@@ -504,10 +504,12 @@ if (fop.length) {
   });
   vulns.splice(0, vulns.length, ...merge([vulns, recent]));
 
-  // Rows already on the list from GitHub (any age) that FriendsOfPHP also
-  // covers: the merged dataset knows, so the row should say so too.
+  // Rows already on the list from GitHub that FriendsOfPHP also covers get
+  // its badge too, with the same FOP_RECENT_DAYS window as its own rows:
+  // FriendsOfPHP shows up on the list only for recent advisories.
   for (const v of vulns) {
     if (!v.categories.includes('composer') || (v.sources ?? [v.source]).includes('friendsofphp')) { continue; }
+    if (!v.published || Date.parse(v.published) < since) { continue; }
     const entry = db.composer?.packages[v.pkg]?.find(a =>
       a.src?.includes('friendsofphp') && ((v.ghsa && a.id === v.ghsa) || (v.cve && a.cve === v.cve)));
     if (entry) {
