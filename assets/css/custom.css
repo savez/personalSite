@@ -769,6 +769,12 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 .chk-unverifiable[hidden],
 .chk-toggle[hidden] { display: none; }
 .adv-cta { font-size: 1.2rem; }
+.adv-page .adv-updated a.adv-rss,
+.adv-page .adv-sources a.adv-rss { color: var(--accent); border-bottom-color: currentColor; white-space: nowrap; }
+.adv-page .adv-sources a.adv-rss { white-space: normal; overflow-wrap: anywhere; }
+.adv-rss-icon { width: 1em; height: 1em; fill: currentColor; vertical-align: -0.12em; margin-right: 0.35em; }
+.adv-page .adv-sources-rss { font-size: 1.2rem; margin: 1.6rem 0 0; text-align: left; }
+.adv-page .adv-sources-rss .adv-sources-what { display: block; color: var(--muted); }
 /* The theme styles inline code as a large pill; here it sits inside running text. */
 .chk-page code { font-family: var(--mono); font-size: 0.9em; background: none; padding: 0; border-radius: 0; color: var(--ink); }
 
