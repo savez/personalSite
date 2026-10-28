@@ -39,7 +39,7 @@
   <article>
     <p class="page-eyebrow">$ advisories --sources github,php-src,nodejs,cert</p>
     <h1>Security advisories</h1>
-    <p class="adv-updated mono">// aggiornato {{ with $vulns.generated }}{{ dateFormat "2006-01-02 15:04" . }}{{ else }}{{ now.UTC.Format "2006-01-02 15:04" }}{{ end }} UTC · <a href="#adv-sources">fonti</a>{{ with .OutputFormats.Get "rss" }} · <a href="{{ .RelPermalink }}" type="application/rss+xml" title="Feed RSS di tutte le advisory e degli alert">rss</a>{{ end }} · <a class="adv-cta" href="{{ "advisories/check/" | relLangURL }}">controlla il tuo progetto →</a></p>
+    <p class="adv-updated mono">// aggiornato {{ with $vulns.generated }}{{ dateFormat "2006-01-02 15:04" . }}{{ else }}{{ now.UTC.Format "2006-01-02 15:04" }}{{ end }} UTC · <a href="#adv-sources">fonti</a>{{ with .OutputFormats.Get "rss" }} · <a class="adv-rss" href="{{ .RelPermalink }}" type="application/rss+xml" title="Feed RSS di tutte le advisory e degli alert"><svg class="adv-rss-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="3" cy="13" r="2"/><path d="M1 6.5a8.5 8.5 0 0 1 8.5 8.5h-2.2A6.3 6.3 0 0 0 1 8.7z"/><path d="M1 1.5A13.5 13.5 0 0 1 14.5 15h-2.2A11.3 11.3 0 0 0 1 3.7z"/></svg>feed rss</a>{{ end }} · <a class="adv-cta" href="{{ "advisories/check/" | relLangURL }}">controlla il tuo progetto →</a></p>
 
     {{/* ---------- Alert crawl ---------- */}}
     <section class="adv-alerts" aria-labelledby="adv-alerts-title">
@@ -185,6 +185,9 @@
           </li>
         {{ end }}
       </ul>
+      {{ with .OutputFormats.Get "rss" }}
+        <p class="adv-sources-rss"><a class="adv-rss" href="{{ .RelPermalink }}" type="application/rss+xml"><svg class="adv-rss-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="3" cy="13" r="2"/><path d="M1 6.5a8.5 8.5 0 0 1 8.5 8.5h-2.2A6.3 6.3 0 0 0 1 8.7z"/><path d="M1 1.5A13.5 13.5 0 0 1 14.5 15h-2.2A11.3 11.3 0 0 0 1 3.7z"/></svg>{{ .Permalink }}</a> <span class="adv-sources-what">feed RSS con tutte le vulnerabilità e tutti gli alert qui sopra, aggiornato insieme alla pagina</span></p>
+      {{ end }}
       <p class="adv-sources-note">Le voci presenti in più fonti sono unite per CVE. Il link «mitigazione» compare quando un bollettino ACN o CERT-EU recente cita la CVE: i feed coprono circa gli ultimi 10 giorni per ACN e gli ultimi 10 bollettini per CERT-EU. Le date delle advisory Node.js senza data esatta indicano il mese della security release.</p>
     </footer>
   </article>
