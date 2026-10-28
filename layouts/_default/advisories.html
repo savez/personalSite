@@ -39,7 +39,7 @@
   <article>
     <p class="page-eyebrow">$ advisories --sources github,php-src,nodejs,cert</p>
     <h1>Security advisories</h1>
-    <p class="adv-updated mono">// aggiornato {{ with $vulns.generated }}{{ dateFormat "2006-01-02 15:04" . }}{{ else }}{{ now.UTC.Format "2006-01-02 15:04" }}{{ end }} UTC · <a href="#adv-sources">fonti</a> · <a class="adv-cta" href="{{ "advisories/check/" | relLangURL }}">controlla il tuo progetto →</a></p>
+    <p class="adv-updated mono">// aggiornato {{ with $vulns.generated }}{{ dateFormat "2006-01-02 15:04" . }}{{ else }}{{ now.UTC.Format "2006-01-02 15:04" }}{{ end }} UTC · <a href="#adv-sources">fonti</a>{{ with .OutputFormats.Get "rss" }} · <a href="{{ .RelPermalink }}" type="application/rss+xml" title="Feed RSS di tutte le advisory e degli alert">rss</a>{{ end }} · <a class="adv-cta" href="{{ "advisories/check/" | relLangURL }}">controlla il tuo progetto →</a></p>
 
     {{/* ---------- Alert crawl ---------- */}}
     <section class="adv-alerts" aria-labelledby="adv-alerts-title">

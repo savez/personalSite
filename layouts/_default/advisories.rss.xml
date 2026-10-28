@@ -1,0 +1,87 @@
+{{- /*
+  RSS of /advisories/: every vulnerability on the page (all categories, all
+  sources) plus every CERT alert of the window, relevant or not, newest first.
+  Same data as the HTML page: hugo.Data.vulns and hugo.Data.alerts.
+*/ -}}
+{{- $vulns := hugo.Data.vulns | default dict -}}
+{{- $alerts := hugo.Data.alerts | default dict -}}
+{{- $catLabels := dict "npm" "pacchetti js" "composer" "composer" "actions" "github actions" "nodejs" "nodejs" "php" "php" "laravel" "laravel" -}}
+{{- $srcLabels := dict "github-reviewed" "GitHub Advisory DB" "github-unreviewed" "GitHub Advisory DB · unreviewed" "php-src" "php-src security advisories" "nodejs-wg" "Node.js security-wg" "friendsofphp" "FriendsOfPHP" -}}
+{{- $rfc822 := "Mon, 02 Jan 2006 15:04:05 -0700" -}}
+
+{{- $entries := slice -}}
+{{- range $vulns.items | default slice -}}
+  {{- $entries = $entries | append (dict "kind" "vuln" "published" .published "item" .) -}}
+{{- end -}}
+{{- range $alerts.items | default slice -}}
+  {{- $entries = $entries | append (dict "kind" "alert" "published" .published "item" .) -}}
+{{- end -}}
+{{- $entries = sort $entries "published" "desc" -}}
+
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Security advisories · smzstudio.it</title>
+    <link>{{ .Permalink }}</link>
+    <description>Vulnerabilità per pacchetti js, composer, github actions, nodejs, php e laravel, più gli alert CERT-EU e CSIRT Italia degli ultimi {{ $alerts.window_hours | default 72 }} ore. Fonti: GitHub Advisory Database, php-src, Node.js security-wg, FriendsOfPHP, CERT-EU, ACN.</description>
+    <language>it-IT</language>
+    <ttl>360</ttl>
+    {{- with $vulns.generated }}
+    <lastBuildDate>{{ (time .).Format $rfc822 }}</lastBuildDate>
+    {{- end }}
+    {{- with .OutputFormats.Get "rss" }}
+    {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
+    {{- end }}
+    {{- range $entries }}
+      {{- $i := .item }}
+      {{- if eq .kind "vuln" }}
+        {{- $sev := $i.severity | default "unknown" }}
+        {{- $score := cond (ne $i.cvss nil) (printf " %.1f" (float $i.cvss)) "" }}
+        {{- $sources := slice }}
+        {{- range ($i.sources | default (slice $i.source)) }}{{ $sources = $sources | append (index $srcLabels . | default .) }}{{ end }}
+        {{- $cats := slice }}
+        {{- range $i.categories }}{{ $cats = $cats | append (index $catLabels . | default .) }}{{ end }}
+        {{- $desc := printf "<p><strong>%s%s</strong> · <code>%s</code> · %s</p><p>%s</p>"
+              (upper $sev) $score (htmlEscape $i.pkg) (htmlEscape (delimit $cats ", ")) (htmlEscape $i.title) }}
+        {{- $ids := slice }}
+        {{- with $i.cve }}{{ $ids = $ids | append . }}{{ end }}
+        {{- with $i.ghsa }}{{ $ids = $ids | append . }}{{ end }}
+        {{- with $ids }}{{ $desc = printf "%s<p>%s</p>" $desc (delimit . " · ") }}{{ end }}
+        {{- with $i.patched }}{{ $desc = printf "%s<p>patch: %s</p>" $desc (htmlEscape .) }}{{ end }}
+        {{- with $i.bulletins }}
+          {{- $links := slice }}
+          {{- range . }}{{ $links = $links | append (printf "<a href=\"%s\">%s</a>" (htmlEscape .url) (htmlEscape .source)) }}{{ end }}
+          {{- $desc = printf "%s<p>mitigazione: %s</p>" $desc (delimit $links " · ") }}
+        {{- end }}
+        {{- with $i.fop }}{{ $desc = printf "%s<p><a href=\"%s\">FriendsOfPHP</a></p>" $desc (htmlEscape .) }}{{ end }}
+        {{- $desc = printf "%s<p>fonte: %s%s</p>" $desc (htmlEscape (delimit $sources " + ")) (cond (eq $i.approx_date true) " · data = mese della security release" "") }}
+    <item>
+      <title>[{{ upper $sev }}{{ $score }}] {{ $i.pkg }} — {{ $i.title }}</title>
+      <link>{{ $i.url }}</link>
+      <guid isPermaLink="false">smzstudio-adv:{{ $i.pkg }}:{{ $i.id }}</guid>
+      <pubDate>{{ (time $i.published).Format $rfc822 }}</pubDate>
+      {{- range $cats }}
+      <category>{{ . }}</category>
+      {{- end }}
+      <category>{{ $sev }}</category>
+      <description>{{ $desc }}</description>
+    </item>
+      {{- else }}
+        {{- $desc := printf "<p>%s</p>" (htmlEscape ($i.description | default "")) }}
+        {{- with $i.cves }}{{ $desc = printf "%s<p>%s</p>" $desc (delimit . " · ") }}{{ end }}
+        {{- $desc = printf "%s<p>fonte: %s</p>" $desc (htmlEscape $i.source) }}
+    <item>
+      <title>[ALERT {{ $i.source }}] {{ $i.title }}</title>
+      <link>{{ $i.url }}</link>
+      <guid isPermaLink="false">smzstudio-alert:{{ $i.url }}</guid>
+      <pubDate>{{ (time $i.published).Format $rfc822 }}</pubDate>
+      <category>alert</category>
+      {{- range $i.categories }}
+      <category>{{ index $catLabels . | default . }}</category>
+      {{- end }}
+      <description>{{ $desc }}</description>
+    </item>
+      {{- end }}
+    {{- end }}
+  </channel>
+</rss>
