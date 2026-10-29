@@ -88,3 +88,17 @@ Add-on che fa girare Hermes Agent — l'agente AI di NousResearch — dentro Hom
 
 Il punto è farlo stando dentro i canoni di Home Assistant invece di aggirarli: Ingress come unico ingresso, tutto il resto in ascolto su loopback, processo non privilegiato, immagine costruita sul dispositivo e nessun pacchetto installato a runtime. I compromessi accettati sono dichiarati uno per uno in SECURITY.md, a partire dal fatto che la dashboard non ha una password propria.
 {{< /project >}}
+
+{{< project
+    name="my-skills"
+    mark="drawer"
+    kind="catalogo"
+    variant="catalog"
+    stack="Markdown · HTML"
+    license="MIT"
+    contents="2 skill · 3 prompt · 3 guide comparative"
+    repo="https://github.com/savez/my-skills" >}}
+Non è software da installare: è un catalogo di skill, prompt e guide per agenti AI come Claude Code e Hermes, scritti in italiano e provati su casi reali. Copi una cartella e il tuo agente impara un mestiere nuovo, per esempio formattare un post LinkedIn o tenere un second brain sul modello LLM-Wiki di Karpathy.
+
+Ci sono anche pagine HTML per scegliere tra modelli LLM e framework di spec-driven development, che si aprono direttamente nel browser. Dove serve codice, usa solo la libreria standard.
+{{< /project >}}
