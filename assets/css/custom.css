@@ -855,6 +855,38 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   .entry.project .proj-mark { margin: 0; }
 }
 
+/* Catalog variant: not software but a drawer of reusable pieces. The row
+   breaks from the list with a dashed rule and an elevated card, and its
+   contents read as index tabs where software shows an install command. */
+.entry.project.project--catalog {
+  margin-top: 1.6rem;
+  padding: 2rem 2rem;
+  background: var(--bg-elevated);
+  border: 1px dashed var(--accent);
+  border-radius: 6px;
+}
+.entry.project .proj-contents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  list-style: none;
+  margin: 0 0 1.4rem;
+  padding: 0;
+  font-size: 1.2rem;
+}
+.entry.project .proj-contents li {
+  margin: 0;
+  padding: 0.3rem 0.9rem;
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--accent);
+  border-radius: 3px 3px 0 0;
+  background: var(--bg);
+  color: var(--ink);
+}
+@media only screen and (max-width: 600px) {
+  .entry.project.project--catalog { padding: 1.4rem; }
+}
+
 /* ---------- CV chat ---------- */
 /* Il CV non viene mai reso in pagina: vive nel tag JSON, serve solo al modello. */
 .cv-chat-block .cv-chat {

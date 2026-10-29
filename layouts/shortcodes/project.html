@@ -1,5 +1,5 @@
 {{- $repo := .Get "repo" -}}
-<div class="entry project">
+<div class="entry project{{ with .Get "variant" }} project--{{ . }}{{ end }}">
   <div class="entry-label mono">
     {{ with .Get "mark" }}{{ partial "project-mark.html" . }}{{ end }}
     {{ with .Get "kind" }}<span class="proj-kind">{{ . }}</span>{{ end }}
@@ -9,6 +9,11 @@
   <div class="entry-body">
     <h3>{{ .Get "name" }}</h3>
     <div class="proj-desc">{{ .Inner | markdownify }}</div>
+    {{ with .Get "contents" }}
+      <ul class="proj-contents mono" aria-label="Contenuto del catalogo">
+        {{ range split . "·" }}<li>{{ trim . " " }}</li>{{ end }}
+      </ul>
+    {{ end }}
     {{ with .Get "cmd" }}
       <p class="proj-cmd mono"><span class="p" aria-hidden="true">$</span> <span class="c">{{ . }}</span></p>
     {{ end }}
