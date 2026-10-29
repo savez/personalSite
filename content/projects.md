@@ -11,7 +11,7 @@ eyebrow = "$ ls -F ~/projects"
 
 <nav class="proj-index mono" aria-label="Sezioni">
   <a href="#altro">altro/</a> <span class="n">1</span>
-  <a href="#software">software/</a> <span class="n">6</span>
+  <a href="#software">software/</a> <span class="n">7</span>
 </nav>
 
 <h2 class="proj-section mono" id="altro">altro/ <span>cataloghi e materiale da copiare</span></h2>
@@ -108,4 +108,17 @@ Il rank non è una somma di punti: quattro categorie — identità, credenziali,
 Add-on che fa girare Hermes Agent — l'agente AI di NousResearch — dentro Home Assistant OS, come pannello nella sidebar e dietro il login di Home Assistant. Profili separati con memoria, skill e bot propri, canali di messaggistica come Telegram, accesso alle entità esposte ad Assist tramite il server MCP di Core e una CLI via SSH.
 
 Il punto è farlo stando dentro i canoni di Home Assistant invece di aggirarli: Ingress come unico ingresso, tutto il resto in ascolto su loopback, processo non privilegiato, immagine costruita sul dispositivo e nessun pacchetto installato a runtime. I compromessi accettati sono dichiarati uno per uno in SECURITY.md, a partire dal fatto che la dashboard non ha una password propria.
+{{< /project >}}
+
+{{< project
+    name="LinkedinFormatter"
+    mark="post"
+    kind="pwa"
+    stack="JavaScript · Manifest V3"
+    license="MIT"
+    repo="https://github.com/savez/linkedin-formatter"
+    page="https://linkedinformatter.smzstudio.it/" >}}
+Grassetto, corsivo, sottolineato ed elenchi nei post LinkedIn, che non li supporta: le lettere diventano caratteri Unicode che sembrano formattati. Scrivi con gli asterischi come in Markdown, vedi l'anteprima con il conteggio sul limite dei 3000 caratteri e copi il testo pronto. Link, hashtag e menzioni restano cliccabili e le lettere accentate funzionano come le altre.
+
+C'è come app installabile, anche offline, e come estensione per Chrome e Firefox con il clic destro *Formatta per LinkedIn*. Le estensioni sono generate dalla stessa PWA a ogni rilascio, quindi si comportano in modo identico. Nessun server e nessun tracciamento: la bozza resta nel browser.
 {{< /project >}}
