@@ -9,11 +9,6 @@
   <div class="entry-body">
     <h3>{{ .Get "name" }}</h3>
     <div class="proj-desc">{{ .Inner | markdownify }}</div>
-    {{ with .Get "contents" }}
-      <ul class="proj-contents mono" aria-label="Contenuto del catalogo">
-        {{ range split . "·" }}<li>{{ trim . " " }}</li>{{ end }}
-      </ul>
-    {{ end }}
     {{ with .Get "cmd" }}
       <p class="proj-cmd mono"><span class="p" aria-hidden="true">$</span> <span class="c">{{ . }}</span></p>
     {{ end }}
