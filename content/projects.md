@@ -22,7 +22,6 @@ eyebrow = "$ ls -F ~/projects"
     kind="catalogo"
     stack="Markdown · HTML"
     license="MIT"
-    contents="2 skill · 3 prompt · 3 guide comparative"
     repo="https://github.com/savez/my-skills" >}}
 Non è software da installare: è un catalogo di skill, prompt e guide per agenti AI come Claude Code e Hermes, scritti in italiano e provati su casi reali. Copi una cartella e il tuo agente impara un mestiere nuovo, per esempio formattare un post LinkedIn o tenere un second brain sul modello LLM-Wiki di Karpathy.
 
