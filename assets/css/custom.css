@@ -868,32 +868,36 @@ body.colorscheme-auto .footer a { color: var(--ink); }
 }
 .page .proj-index a { color: var(--accent); }
 .page .proj-index .n { color: var(--muted); font-size: 1.2rem; margin-right: 1.6rem; }
-.page .proj-section {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.4rem 1.2rem;
-  margin: 3.2rem 0 1.2rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 1px solid var(--line);
-  font-size: 1.5rem;
+/* Section heads carry the split, so they outrank the rows: the directory
+   name in mono accent, what lives there underneath, an accent rule closing
+   the head. Rows inside stay identical whatever their section.
+   (0,2,2) + later in file beats the theme's `body.colorscheme-* .content h2`. */
+body .content h2.proj-section {
+  margin: 5.6rem 0 0.4rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--accent);
+  font-family: var(--mono);
+  font-size: 2rem;
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--accent);
   text-align: left;
   scroll-margin-top: 2rem;
 }
-.page .proj-section span { font-weight: 400; font-size: 1.25rem; color: var(--muted); }
-.page .proj-index + .proj-section { margin-top: 0; }
-
-/* Catalog variant: not software but a drawer of reusable pieces. The row
-   breaks from the list with a dashed rule and an elevated card, and its
-   contents read as index tabs where software shows an install command. */
-.entry.project.project--catalog {
-  padding: 2rem 2rem;
-  background: var(--bg-elevated);
-  border: 1px dashed var(--accent);
-  border-radius: 6px;
+body .content h2.proj-section span {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--sans);
+  font-size: 1.35rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--muted);
 }
+body .content .proj-index + h2.proj-section { margin-top: 0; }
+/* The next section's head already rules the list off — no double line. */
+.entry.project:has(+ h2.proj-section) { border-bottom: none; }
+
+/* A catalog has no install command: its contents read as index tabs instead. */
 .entry.project .proj-contents {
   display: flex;
   flex-wrap: wrap;
@@ -909,11 +913,8 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   border: 1px solid var(--line);
   border-top: 2px solid var(--accent);
   border-radius: 3px 3px 0 0;
-  background: var(--bg);
+  background: var(--bg-elevated);
   color: var(--ink);
-}
-@media only screen and (max-width: 600px) {
-  .entry.project.project--catalog { padding: 1.4rem; }
 }
 
 /* ---------- CV chat ---------- */
