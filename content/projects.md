@@ -10,11 +10,11 @@ eyebrow = "$ ls -F ~/projects"
 <p class="lead">Progetti open source che sviluppo nel tempo libero. Molti nascono con l'aiuto dell'AI, alcuni quasi interamente in vibe coding, altri meno, ma sicurezza e architettura le controllo sempre io. Codice su GitHub, contributi benvenuti.</p>
 
 <nav class="proj-index mono" aria-label="Sezioni">
-  <a href="#altro">altro/</a> <span class="n">1</span>
-  <a href="#software">software/</a> <span class="n">7</span>
+  <a href="#altro">altro/</a> <span class="n">2</span>
+  <a href="#software">software/</a> <span class="n">6</span>
 </nav>
 
-<h2 class="proj-section mono" id="altro">altro/ <span>cataloghi e materiale da copiare</span></h2>
+<h2 class="proj-section mono" id="altro">altro/ <span>cataloghi e add-on per strumenti di altri</span></h2>
 
 {{< project
     name="my-skills"
@@ -26,6 +26,18 @@ eyebrow = "$ ls -F ~/projects"
 Non è software da installare: è un catalogo di skill, prompt e guide per agenti AI come Claude Code e Hermes, scritti in italiano e provati su casi reali. Copi una cartella e il tuo agente impara un mestiere nuovo, per esempio formattare un post LinkedIn o tenere un second brain sul modello LLM-Wiki di Karpathy.
 
 Ci sono anche pagine HTML per scegliere tra modelli LLM e framework di spec-driven development, che si aprono direttamente nel browser. Dove serve codice, usa solo la libreria standard.
+{{< /project >}}
+
+{{< project
+    name="Hermes Agent per Home Assistant"
+    mark="panel"
+    kind="add-on"
+    stack="Home Assistant OS · Docker · s6"
+    license="MIT"
+    repo="https://github.com/savez/hermes-agent-addon-ha" >}}
+Add-on che fa girare Hermes Agent — l'agente AI di NousResearch — dentro Home Assistant OS, come pannello nella sidebar e dietro il login di Home Assistant. Profili separati con memoria, skill e bot propri, canali di messaggistica come Telegram, accesso alle entità esposte ad Assist tramite il server MCP di Core e una CLI via SSH.
+
+Il punto è farlo stando dentro i canoni di Home Assistant invece di aggirarli: Ingress come unico ingresso, tutto il resto in ascolto su loopback, processo non privilegiato, immagine costruita sul dispositivo e nessun pacchetto installato a runtime. I compromessi accettati sono dichiarati uno per uno in SECURITY.md, a partire dal fatto che la dashboard non ha una password propria.
 {{< /project >}}
 
 <h2 class="proj-section mono" id="software">software/ <span>da installare o da usare nel browser</span></h2>
@@ -96,18 +108,6 @@ Include preventivi con numerazione progressiva, catalogo ricambi con lettura dei
 Estensione contro il phishing per Chrome e Firefox: legge l'indirizzo e il contenuto di ogni pagina, assegna un rischio da 1 a 5 e mette un interstiziale prima che tu digiti le credenziali. Riconosce marchi infilati nel sottodominio altrui, typosquatting, omografi in alfabeti misti e login in chiaro, su 50 marchi italiani e internazionali.
 
 Il rank non è una somma di punti: quattro categorie — identità, credenziali, trasporto, reputazione — si combinano, e le credenziali da sole non bastano mai. Tutta l'analisi resta nel browser, senza telemetria. Nella pagina di progetto c'è un simulatore che gira sullo stesso motore dell'estensione.
-{{< /project >}}
-
-{{< project
-    name="Hermes Agent per Home Assistant"
-    mark="panel"
-    kind="add-on"
-    stack="Home Assistant OS · Docker · s6"
-    license="MIT"
-    repo="https://github.com/savez/hermes-agent-addon-ha" >}}
-Add-on che fa girare Hermes Agent — l'agente AI di NousResearch — dentro Home Assistant OS, come pannello nella sidebar e dietro il login di Home Assistant. Profili separati con memoria, skill e bot propri, canali di messaggistica come Telegram, accesso alle entità esposte ad Assist tramite il server MCP di Core e una CLI via SSH.
-
-Il punto è farlo stando dentro i canoni di Home Assistant invece di aggirarli: Ingress come unico ingresso, tutto il resto in ascolto su loopback, processo non privilegiato, immagine costruita sul dispositivo e nessun pacchetto installato a runtime. I compromessi accettati sono dichiarati uno per uno in SECURITY.md, a partire dal fatto che la dashboard non ha una password propria.
 {{< /project >}}
 
 {{< project
