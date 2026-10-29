@@ -2,12 +2,35 @@
 title = "Projects"
 slug = "projects"
 description = "Progetti open source di Saverio Menin"
-eyebrow = "$ ls ~/projects"
+eyebrow = "$ ls -F ~/projects"
 +++
 
 <h1 class="sr-only">Projects</h1>
 
 <p class="lead">Progetti open source che sviluppo nel tempo libero. Molti nascono con l'aiuto dell'AI, alcuni quasi interamente in vibe coding, altri meno, ma sicurezza e architettura le controllo sempre io. Codice su GitHub, contributi benvenuti.</p>
+
+<nav class="proj-index mono" aria-label="Sezioni">
+  <a href="#altro">altro/</a> <span class="n">1</span>
+  <a href="#software">software/</a> <span class="n">6</span>
+</nav>
+
+<h2 class="proj-section mono" id="altro">altro/ <span>cataloghi e materiale da copiare</span></h2>
+
+{{< project
+    name="my-skills"
+    mark="drawer"
+    kind="catalogo"
+    variant="catalog"
+    stack="Markdown · HTML"
+    license="MIT"
+    contents="2 skill · 3 prompt · 3 guide comparative"
+    repo="https://github.com/savez/my-skills" >}}
+Non è software da installare: è un catalogo di skill, prompt e guide per agenti AI come Claude Code e Hermes, scritti in italiano e provati su casi reali. Copi una cartella e il tuo agente impara un mestiere nuovo, per esempio formattare un post LinkedIn o tenere un second brain sul modello LLM-Wiki di Karpathy.
+
+Ci sono anche pagine HTML per scegliere tra modelli LLM e framework di spec-driven development, che si aprono direttamente nel browser. Dove serve codice, usa solo la libreria standard.
+{{< /project >}}
+
+<h2 class="proj-section mono" id="software">software/ <span>da installare o da usare nel browser</span></h2>
 
 {{< project
     name="Devvami"
@@ -87,18 +110,4 @@ Il rank non è una somma di punti: quattro categorie — identità, credenziali,
 Add-on che fa girare Hermes Agent — l'agente AI di NousResearch — dentro Home Assistant OS, come pannello nella sidebar e dietro il login di Home Assistant. Profili separati con memoria, skill e bot propri, canali di messaggistica come Telegram, accesso alle entità esposte ad Assist tramite il server MCP di Core e una CLI via SSH.
 
 Il punto è farlo stando dentro i canoni di Home Assistant invece di aggirarli: Ingress come unico ingresso, tutto il resto in ascolto su loopback, processo non privilegiato, immagine costruita sul dispositivo e nessun pacchetto installato a runtime. I compromessi accettati sono dichiarati uno per uno in SECURITY.md, a partire dal fatto che la dashboard non ha una password propria.
-{{< /project >}}
-
-{{< project
-    name="my-skills"
-    mark="drawer"
-    kind="catalogo"
-    variant="catalog"
-    stack="Markdown · HTML"
-    license="MIT"
-    contents="2 skill · 3 prompt · 3 guide comparative"
-    repo="https://github.com/savez/my-skills" >}}
-Non è software da installare: è un catalogo di skill, prompt e guide per agenti AI come Claude Code e Hermes, scritti in italiano e provati su casi reali. Copi una cartella e il tuo agente impara un mestiere nuovo, per esempio formattare un post LinkedIn o tenere un second brain sul modello LLM-Wiki di Karpathy.
-
-Ci sono anche pagine HTML per scegliere tra modelli LLM e framework di spec-driven development, che si aprono direttamente nel browser. Dove serve codice, usa solo la libreria standard.
 {{< /project >}}

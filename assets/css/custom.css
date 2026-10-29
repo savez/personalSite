@@ -855,11 +855,40 @@ body.colorscheme-auto .footer a { color: var(--ink); }
   .entry.project .proj-mark { margin: 0; }
 }
 
+/* Section index: the eyebrow's `ls -F` output, linking to each section.
+   The trailing slash is ls's own mark for a directory. */
+.page .proj-index {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.8rem;
+  margin: 0 0 3.2rem;
+  font-size: 1.4rem;
+  text-align: left;
+}
+.page .proj-index a { color: var(--accent); }
+.page .proj-index .n { color: var(--muted); font-size: 1.2rem; margin-right: 1.6rem; }
+.page .proj-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1.2rem;
+  margin: 3.2rem 0 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: left;
+  scroll-margin-top: 2rem;
+}
+.page .proj-section span { font-weight: 400; font-size: 1.25rem; color: var(--muted); }
+.page .proj-index + .proj-section { margin-top: 0; }
+
 /* Catalog variant: not software but a drawer of reusable pieces. The row
    breaks from the list with a dashed rule and an elevated card, and its
    contents read as index tabs where software shows an install command. */
 .entry.project.project--catalog {
-  margin-top: 1.6rem;
   padding: 2rem 2rem;
   background: var(--bg-elevated);
   border: 1px dashed var(--accent);
