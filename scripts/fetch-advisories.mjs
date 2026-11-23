@@ -15,8 +15,13 @@
  *   assets/advisories-db/composer.json  every reviewed composer advisory
  *                                       { packages: { name: [advisory…] } }
  *
+ *   Both come from the OSV.dev bulk exports (npm/all.zip, Packagist/all.zip),
+ *   kept to GitHub reviewed advisories: the same data as the GitHub API, in one
+ *   download per ecosystem instead of ~100 paginated calls.
+ *
  * Sources:
  *   - GitHub Advisory DB, reviewed: one page per ecosystem + the Laravel packages
+ *   - OSV.dev bulk exports: the full GitHub reviewed dataset for the check page
  *   - GitHub Advisory DB, unreviewed: every advisory published in the last
  *     UNREVIEWED_DAYS, kept only when a reference points at a tracked repo
  *     (php/php-src, nodejs/node, laravel/*). Unreviewed advisories carry no
@@ -51,6 +56,7 @@
 import { writeFileSync, mkdirSync } from 'fs';
 import { resolve }                  from 'path';
 import { FOP_TARBALL, FOP_BLOB, readTarGz, parseAdvisory, mergeIntoDataset } from './lib/friendsofphp.mjs';
+import { OSV_BUCKET, OSV_ECOSYSTEM, readZip, isGhsaFile, osvDataset } from './lib/osv.mjs';
 
 const TOKEN           = process.env.GH_TOKEN ?? process.env.GITHUB_TOKEN ?? '';
 const UNREVIEWED_DAYS = Number(process.env.UNREVIEWED_DAYS ?? 7);
@@ -236,39 +242,16 @@ async function unreviewed() {
 
 // Every reviewed advisory of an ecosystem, keyed by package. Only what the
 // check page needs: ranges to match the installed version and the fix.
-// One advisory can cover several packages; each gets its own ranges.
+// Read from the OSV.dev bulk export: one zip instead of paging the GitHub API.
+// See scripts/lib/osv.mjs.
 async function fullDataset(eco) {
-  let url = `${GH_API}/advisories?type=reviewed&ecosystem=${eco}&per_page=100`;
-  const packages = {};
-  let count = 0;
-  while (url) {
-    const { body, link } = await getJSON(url, { github: true });
-    for (const adv of body) {
-      if (adv.withdrawn_at) { continue; }
-      count++;
-      const score = cvssScore(adv.cvss_severities);
-      const byPkg = new Map();
-      for (const v of adv.vulnerabilities ?? []) {
-        const name = v.package?.name;
-        if (!name || v.package.ecosystem !== eco || !v.vulnerable_version_range) { continue; }
-        if (!byPkg.has(name)) { byPkg.set(name, []); }
-        byPkg.get(name).push([v.vulnerable_version_range, v.first_patched_version ?? null]);
-      }
-      for (const [name, ranges] of byPkg) {
-        (packages[name] ??= []).push({
-          id: adv.ghsa_id,
-          cve: adv.cve_id || '',
-          sev: normSeverity(adv.severity, score),
-          cvss: score,
-          title: oneLine(adv.summary, 120),
-          published: adv.published_at?.slice(0, 10) ?? '',
-          ranges,
-        });
-      }
-    }
-    url = nextLink(link);
-  }
-  return { count, packages };
+  const url = `${OSV_BUCKET}/${OSV_ECOSYSTEM[eco]}/all.zip`;
+  const res = await fetch(url, { headers: { 'User-Agent': 'smzstudio-advisories' }, signal: AbortSignal.timeout(300_000) });
+  if (!res.ok) { throw new Error(`${res.status} ${res.statusText} — ${url}`); }
+  const files = readZip(Buffer.from(await res.arrayBuffer()), isGhsaFile);
+  const dataset = osvDataset(files, OSV_ECOSYSTEM[eco], { normSeverity, oneLine });
+  if (!dataset.count) { throw new Error(`no reviewed advisories in ${url}`); }
+  return dataset;
 }
 
 async function phpSrc() {

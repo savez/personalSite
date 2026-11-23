@@ -88,6 +88,6 @@ export function toMarkdown({ format, findings, checked, unverifiable, generated,
     }
     lines.push('');
   }
-  lines.push(`_Dataset GitHub Advisory Database del ${String(generated).slice(0, 10)} · ${pageUrl}_`);
+  lines.push(`_Dataset GitHub Advisory Database (via OSV.dev) del ${String(generated).slice(0, 10)} · ${pageUrl}_`);
   return lines.join('\n');
 }

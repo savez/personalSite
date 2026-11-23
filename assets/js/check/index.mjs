@@ -12,7 +12,7 @@ const root = document.getElementById('chk');
 if (root) { init(root); }
 
 const FOP_BLOB = 'https://github.com/FriendsOfPHP/security-advisories/blob/master';
-const SRC_LABEL = { github: 'GitHub Advisory DB', friendsofphp: 'FriendsOfPHP' };
+const SRC_LABEL = { github: 'GitHub Advisory DB via OSV.dev', friendsofphp: 'FriendsOfPHP' };
 
 // Advisory links come from third-party data (FriendsOfPHP files): only http(s).
 const safeUrl = u => (/^https?:\/\//i.test(String(u ?? '')) ? u : null);
