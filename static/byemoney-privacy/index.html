@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ByeMoney — Informativa sulla privacy</title>
+<style>
+  :root { --bg:#faf7f0; --ink:#1d2420; --soft:#5b655f; --accent:#1f4d3a; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#14181a; --ink:#e9ece8; --soft:#9aa6a0; --accent:#7fc3a0; } }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui, sans-serif; }
+  main { max-width:44rem; margin:0 auto; padding:2rem 1rem 4rem; }
+  h1 { font-size:1.8rem; } h2 { margin-top:2rem; font-size:1.2rem; color:var(--accent); }
+  p, li { color:var(--ink); } .soft { color:var(--soft); }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+<h1>Informativa sulla privacy di ByeMoney</h1>
+<p class="soft">Ultimo aggiornamento: 28 novembre 2026</p>
+
+<p>ByeMoney è un'app Android per tenere insieme le spese di famiglia. Titolare del trattamento: <strong>Saverio Menin</strong>, contatto: <a href="mailto:[EMAIL DI CONTATTO]">[EMAIL DI CONTATTO]</a>.</p>
+
+<h2>In breve</h2>
+<ul>
+  <li>Non esiste un server di ByeMoney: l'autore non riceve, non vede e non conserva i tuoi dati.</li>
+  <li>Le spese stanno sul tuo telefono e in un foglio Google Sheets che appartiene a te e alla tua famiglia, nel tuo Google Drive.</li>
+  <li>Nessuna pubblicità, nessuna analisi di utilizzo, nessuna vendita di dati.</li>
+  <li>L'assistente intelligente, la lettura degli scontrini e la voce funzionano sul telefono.</li>
+</ul>
+
+<h2>Quali dati usa l'app</h2>
+<ul>
+  <li><strong>Account Google</strong>: indirizzo email e nome, per riconoscerti come membro della famiglia e mostrare chi ha inserito una spesa.</li>
+  <li><strong>Spese</strong>: importo, descrizione, categoria, data, autore, eventuale elenco dei membri a cui l'importo è nascosto.</li>
+  <li><strong>Conti e saldi</strong>: i valori di fine mese dei conti correnti che inserisci tu a mano. L'app non si collega a nessuna banca.</li>
+  <li><strong>Spese ricorrenti</strong> e relative conferme.</li>
+  <li><strong>Foto degli scontrini</strong>, se decidi di allegarle.</li>
+  <li><strong>Voce</strong>, se dettiamo una spesa a voce: l'audio è trascritto sul telefono dal riconoscitore vocale di Android e non viene salvato dall'app.</li>
+</ul>
+
+<h2>Dove finiscono i dati</h2>
+<ul>
+  <li><strong>Sul telefono</strong>, in un database privato dell'app. Non è incluso nei backup di Android.</li>
+  <li><strong>In un foglio Google Sheets</strong> creato dall'app nel Drive di chi avvia la famiglia e condiviso con i membri invitati. Le foto degli scontrini stanno in una cartella Drive della famiglia. Google tratta questi file secondo la propria informativa.</li>
+  <li><strong>Con i membri della famiglia</strong>: chiunque abbia accesso al foglio vede le spese, i conti e le foto. L'opzione "nascondi importo" nasconde l'importo nell'app agli altri membri, ma il valore resta scritto nel foglio: chi apre direttamente il foglio in Google Sheets può leggerlo. Non è una cifratura.</li>
+</ul>
+
+<h2>Autorizzazioni Google</h2>
+<p>Per funzionare l'app chiede a Google il permesso di: leggere nome ed email; creare e modificare il foglio di famiglia (<code>spreadsheets</code>); creare e gestire i soli file creati o aperti dall'app in Drive (<code>drive.file</code>). L'app non può leggere gli altri file del tuo Drive. I permessi si possono revocare in ogni momento da <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.</p>
+<p>L'uso e il trasferimento a qualsiasi altra app delle informazioni ricevute dalle API di Google rispetterà la <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, inclusi i requisiti di Limited Use.</p>
+
+<h2>Funzioni sul telefono</h2>
+<ul>
+  <li><strong>Assistente</strong>: un modello linguistico (Gemma o LFM3) è scaricato una volta da Hugging Face, solo dopo la tua scelta, e poi gira interamente sul telefono. Le tue domande e le tue spese non lasciano il telefono. Hugging Face vede, come ogni sito, l'indirizzo IP del download.</li>
+  <li><strong>Scontrini</strong>: il testo è letto sul telefono (ML Kit, modello incluso nell'app) e la foto non è inviata a nessuno tranne che alla cartella Drive della famiglia, se la allegli.</li>
+  <li><strong>Fotocamera</strong>: per fotografare scontrini e leggere il codice QR di invito.</li>
+  <li><strong>Notifiche</strong>: promemoria per i conti e per confermare le spese ricorrenti.</li>
+</ul>
+
+<h2>Sicurezza</h2>
+<ul>
+  <li>Il collegamento con Google usa HTTPS.</li>
+  <li>L'app si blocca con l'impronta o il blocco schermo del telefono e nasconde il contenuto nelle app recenti e negli screenshot.</li>
+  <li>I token di accesso sono gestiti da Google e non sono salvati dall'app.</li>
+</ul>
+
+<h2 id="cancellazione">Conservazione e cancellazione</h2>
+<ul>
+  <li>Disinstallando l'app si cancellano i dati locali sul telefono.</li>
+  <li>"Esci dalla famiglia" nelle Impostazioni revoca il permesso concesso all'app.</li>
+  <li>Le spese nel foglio restano finché chi possiede il foglio non lo elimina da Google Drive. Per far cancellare i tuoi dati chiedi a chi gestisce il foglio, oppure scrivi a <a href="mailto:[EMAIL DI CONTATTO]">[EMAIL DI CONTATTO]</a>.</li>
+</ul>
+
+<h2>I tuoi diritti</h2>
+<p>Ai sensi del GDPR puoi chiedere accesso, rettifica, cancellazione e portabilità dei tuoi dati, e proporre reclamo al Garante per la protezione dei dati personali. Poiché i dati sono nel foglio di famiglia, la maggior parte di queste operazioni puoi farla da solo in Google Sheets.</p>
+
+<h2>Minori</h2>
+<p>ByeMoney non è rivolta ai minori di 14 anni.</p>
+
+<h2>Modifiche</h2>
+<p>Le modifiche a questa informativa sono pubblicate qui, con la data di aggiornamento.</p>
+
+<p class="soft"><a href="https://byemoney.smzstudio.it/">Torna a ByeMoney</a></p>
+</main>
+</body>
+</html>

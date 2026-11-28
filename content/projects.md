@@ -11,7 +11,7 @@ eyebrow = "$ ls -F ~/projects"
 
 <nav class="proj-index mono" aria-label="Sezioni">
   <a href="#altro">altro/</a> <span class="n">2</span>
-  <a href="#software">software/</a> <span class="n">6</span>
+  <a href="#software">software/</a> <span class="n">8</span>
 </nav>
 
 <h2 class="proj-section mono" id="altro">altro/ <span>cataloghi e add-on per strumenti di altri</span></h2>
@@ -41,6 +41,30 @@ Il punto è farlo stando dentro i canoni di Home Assistant invece di aggirarli: 
 {{< /project >}}
 
 <h2 class="proj-section mono" id="software">software/ <span>da installare o da usare nel browser</span></h2>
+
+{{< project
+    name="devbar"
+    mark="menubar"
+    kind="app macOS"
+    stack="Swift 6 · macOS 14+"
+    license="GPLv3"
+    repo="https://github.com/savez/devbar"
+    page="https://devbar.smzstudio.it/" >}}
+Menu bar per macOS che tiene d'occhio il Mac di sviluppo: un'icona cambia colore quando c'è qualcosa da sistemare e un clic apre il pannello, senza passare dal terminale. Mostra i pacchetti Homebrew da aggiornare, le vulnerabilità (`brew vulns`, `npm audit`, `composer audit`) sui repo che scegli, lo stato di colima e i token risparmiati con RTK, tokensave e Claude Code.
+
+Installa e aggiorna gli strumenti AI su tutti gli harness che trova e configura un repo con un clic. C'è anche una statusline per Claude Code. Dettagli in tabelle ordinabili in una finestra a parte.
+{{< /project >}}
+
+{{< project
+    name="ByeMoney"
+    mark="sheet"
+    kind="app Android"
+    stack="Kotlin · Jetpack Compose"
+    page="https://byemoney.smzstudio.it/" >}}
+App Android per tenere insieme le spese di famiglia. Le spese stanno sul telefono e in un foglio Google Sheets che appartiene alla famiglia, nel suo Drive: non esiste un server e chi la sviluppa non vede i dati. Conti e saldi si inseriscono a mano, le spese ricorrenti si confermano con una notifica e un importo si può nascondere agli altri membri, per esempio per i regali.
+
+L'assistente, la lettura degli scontrini e la voce girano sul telefono. Nessuna pubblicità e nessuna analisi di utilizzo. [Informativa sulla privacy](/byemoney-privacy/).
+{{< /project >}}
 
 {{< project
     name="Devvami"
